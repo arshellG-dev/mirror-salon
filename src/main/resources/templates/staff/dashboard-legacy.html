@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Staff Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<main class="m-container m-section">
+  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
+    <span class="m-eyebrow" th:text="${staff.staffType}">ROLE</span>
+    <h1 class="m-h1" th:text="'Welcome, ' + ${staff.firstName}">Welcome</h1>
+  </div>
+
+  <div class="m-grid m-grid--fit" style="--min:280px">
+    <div class="m-card" sec:authorize="hasAnyRole('ADMIN','RECEPTIONIST')">
+      <div class="m-card__body">
+        <h3 class="m-card__title" style="font-size:22px">Payment Verification</h3>
+        <p class="m-body" style="font-size:14px">Verify pending bank-transfer payments.</p>
+        <a href="/staff/payments" class="m-btn m-btn--outline m-btn--sm" data-ripple>Open</a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Profile')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('profile')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:760px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:8px" data-stagger>My profile</h1>
+      <p class="m-body" style="font-size:13px; margin-bottom:24px">This is what clients see about you on the public site.</p>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+      <div class="m-grid" style="--min:280px; align-items:start; gap:32px">
+        <form method="post" th:action="@{/staff/my-profile}" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:14px">
+          <label class="m-field">Specialty title<input id="preview-title" class="m-input" name="specialtyTitle" th:value="${stylist.specialtyTitle}" oninput="document.getElementById('pv-title').textContent = this.value"/></label>
+          <label class="m-field">Photo<input type="file" name="photo" class="m-input" accept="image/*"/></label>
+          <label class="m-field">Bio<textarea id="preview-bio" class="m-input" name="bio" rows="5" oninput="document.getElementById('pv-bio').textContent = this.value" th:text="${stylist.bio}"></textarea></label>
+          <button type="submit" class="m-btn m-btn--primary m-btn--sm" style="align-self:flex-start" data-ripple>Save profile</button>
+        </form>
+
+        <div>
+          <span class="m-locked-note">LIVE PREVIEW</span>
+          <div class="m-price-card" style="margin-top:10px; text-align:center">
+            <img th:if="${stylist.photoUrl != null}" th:src="${stylist.photoUrl}" alt="Photo"
+                 style="width:96px; height:96px; object-fit:cover; border-radius:50%; margin:0 auto 14px"/>
+            <div th:unless="${stylist.photoUrl != null}" style="width:96px; height:96px; border-radius:50%; background:var(--c-blush); margin:0 auto 14px"></div>
+            <h3 class="m-card__title" style="font-size:20px" th:text="${stylist.staff.fullName}">Name</h3>
+            <span id="pv-title" class="m-meta" th:text="${stylist.specialtyTitle}">Specialty</span>
+            <p id="pv-bio" class="m-body" style="font-size:13.5px; margin-top:10px" th:text="${stylist.bio}">Bio</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
