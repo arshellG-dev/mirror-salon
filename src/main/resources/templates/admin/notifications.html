@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Notifications Log')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('notifications')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" data-filter-scope>
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">Notifications log</h1>
+        <span class="m-badge">Demo mode — not really sent</span>
+      </div>
+
+      <div class="m-chips" style="margin-bottom:20px">
+        <button type="button" class="m-chip is-active" data-filter="all" data-ripple aria-pressed="true">All</button>
+        <button type="button" class="m-chip" data-filter="QUEUED" data-ripple aria-pressed="false">Queued</button>
+        <button type="button" class="m-chip" data-filter="SENT" data-ripple aria-pressed="false">Sent</button>
+        <button type="button" class="m-chip" data-filter="FAILED" data-ripple aria-pressed="false">Failed</button>
+      </div>
+
+      <table class="m-table">
+        <thead><tr><th>Scheduled</th><th>Type</th><th>Customer ID</th><th>Message</th><th>Status</th></tr></thead>
+        <tbody>
+        <tr th:each="n : ${notifications}" data-item th:attr="data-cat=${n.sendStatus}" th:data-title="${n.notifType}">
+          <td th:text="${n.scheduledAt}">date</td>
+          <td th:text="${n.notifType}">TYPE</td>
+          <td th:text="${n.customerId}">1</td>
+          <td th:text="${n.message}">message</td>
+          <td><span th:replace="~{fragments/internal-layout :: statusBadge(${n.sendStatus})}"></span></td>
+        </tr>
+        </tbody>
+      </table>
+      <p class="m-body" th:if="${notifications.isEmpty()}">No notifications queued yet.</p>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
