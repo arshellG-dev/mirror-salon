@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Salon Holidays')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('holidays')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:640px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:24px" data-stagger>Salon holidays</h1>
+  <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+  <form method="post" th:action="@{/admin/holidays}" style="display:flex; gap:10px; align-items:end; flex-wrap:wrap; margin-bottom:28px">
+    <label class="m-field">Date<input type="date" name="holidayDate" class="m-input" required="required"/></label>
+    <label class="m-field" style="flex:1; min-width:200px">Description<input type="text" name="description" class="m-input" required="required"/></label>
+    <button type="submit" class="m-btn m-btn--primary" data-ripple>Add</button>
+  </form>
+
+  <table class="m-table">
+    <thead><tr><th>Date</th><th>Description</th><th>Declared by</th><th></th></tr></thead>
+    <tbody>
+    <tr th:each="h : ${holidays}">
+      <td th:text="${h.holidayDate}">date</td>
+      <td th:text="${h.description}">desc</td>
+      <td th:text="${h.declaredBy.fullName}">staff</td>
+      <td>
+        <form th:action="@{/admin/holidays/{date}/delete(date=${h.holidayDate})}" method="post"
+              onsubmit="return confirm('Remove this holiday? If any bookings already exist for this date, it will become bookable again.');">
+          <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Remove</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

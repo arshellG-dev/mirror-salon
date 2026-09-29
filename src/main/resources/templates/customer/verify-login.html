@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Verify Code')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<main class="m-container m-section" style="max-width:440px">
+  <div class="m-heading-block" style="margin-bottom:28px" data-stagger>
+    <span class="m-eyebrow">VERIFY</span>
+    <h1 class="m-h1" style="font-size:44px">Enter your code.</h1>
+  </div>
+  <p class="m-body" style="font-size:14px">A code was sent to <strong th:text="${mobileNo}">mobile</strong>.</p>
+  <div th:if="${demoOtp}" class="m-alert" style="background:rgba(176,141,87,.15); color:var(--c-heading); font-size:14px">
+    <strong>Demo mode — your code:</strong> <span style="font-size:20px; letter-spacing:.1em" th:text="${demoOtp}">000000</span>
+  </div>
+  <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+  <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+  <form method="post" th:action="@{/login/verify}" style="display:flex; flex-direction:column; gap:18px; margin-top:18px">
+    <label class="m-field">6-digit code<input class="m-input" name="code" maxlength="6" pattern="[0-9]{6}" required="required" autofocus="autofocus"/></label>
+    <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Verify &amp; continue</button>
+  </form>
+  <form method="post" th:action="@{/login/resend}" style="margin-top:12px">
+    <button type="submit" class="m-btn m-btn--outline m-btn--block" data-ripple>Resend code</button>
+  </form>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
