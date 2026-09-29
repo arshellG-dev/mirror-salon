@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Payment Verification')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('payments')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:640px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:20px" data-stagger>Pending payments</h1>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+  <div class="m-price-card" th:each="p : ${payments}" style="margin-bottom:20px">
+    <div class="m-price-card__head">
+      <span class="m-price-card__title" style="text-transform:none; letter-spacing:normal; font-family:var(--f-serif); font-size:22px; color:var(--c-heading)"
+            th:text="'Order #' + ${p.order.orderId} + ' — ' + ${p.order.customer.fullName}">Order</span>
+      <span class="m-meta" th:text="${p.paymentMethod}">METHOD</span>
+    </div>
+    <p class="m-body" style="font-size:14px">Amount: Rs. <span th:text="${#numbers.formatDecimal(p.amount, 1, 'COMMA', 0, 'POINT')}">0</span></p>
+    <div th:if="${slips.containsKey(p.paymentId)}" style="margin-bottom:12px; display:flex; gap:12px; align-items:center">
+      <a th:href="${slips.get(p.paymentId).slipFilePath}" target="_blank">
+        <img th:src="${slips.get(p.paymentId).slipFilePath}" alt="Deposit slip" style="width:64px; height:64px; object-fit:cover; border-radius:var(--r-sm)" onerror="this.style.display='none'"/>
+      </a>
+      <div>
+        <p class="m-body" style="font-size:13px; margin:0">Bank reference: <span th:text="${slips.get(p.paymentId).bankReference}">ref</span></p>
+        <a th:href="${slips.get(p.paymentId).slipFilePath}" target="_blank" class="m-link-btn" data-ripple>View full size</a>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px">
+      <form th:action="@{/staff/payments/{id}/verify(id=${p.paymentId})}" method="post">
+        <button type="submit" class="m-btn m-btn--primary m-btn--sm" data-ripple>Verify</button>
+      </form>
+      <form th:action="@{/staff/payments/{id}/reject(id=${p.paymentId})}" method="post" onsubmit="return setReason(this);">
+        <input type="hidden" name="reason" value=""/>
+        <button type="submit" class="m-btn m-btn--row" data-ripple>Reject</button>
+      </form>
+    </div>
+  </div>
+      <p class="m-body" th:if="${payments.isEmpty()}">No pending payments.</p>
+    </main>
+  </div>
+</div>
+<script>
+function setReason(form) {
+    var reason = prompt('Reason for rejecting this payment?');
+    if (!reason) { return false; }
+    form.querySelector('input[name=reason]').value = reason;
+    return true;
+}
+</script>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
