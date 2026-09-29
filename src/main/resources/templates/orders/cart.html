@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Your Bag')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('shop')}"></header>
+<main class="m-container m-section" style="max-width:820px">
+  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
+    <span class="m-eyebrow">YOUR BAG</span>
+    <h1 class="m-h1">Your bag</h1>
+  </div>
+
+  <div class="m-price-card" th:unless="${lines.isEmpty()}">
+    <div class="m-price-row" th:each="line : ${lines}">
+      <div style="min-width:0">
+        <span class="m-price-row__name" th:text="${line.product.productName}">Product</span>
+        <span class="m-price-row__up" th:text="'Rs. ' + ${#numbers.formatDecimal(line.product.price, 1, 'COMMA', 0, 'POINT')} + ' each'">price</span>
+      </div>
+      <form th:action="@{/cart/update}" method="post" style="display:flex; gap:6px; align-items:center">
+        <input type="hidden" name="productId" th:value="${line.product.productId}"/>
+        <input type="number" name="quantity" th:value="${line.quantity}" min="0" class="m-input" style="width:70px; padding:8px 10px"/>
+        <button type="submit" class="m-btn m-btn--row" data-ripple>Update</button>
+      </form>
+      <div class="m-price-row__price">
+        <span class="m-price-row__amount" th:text="'Rs. ' + ${#numbers.formatDecimal(line.lineTotal, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span>
+      </div>
+      <form th:action="@{/cart/remove}" method="post">
+        <input type="hidden" name="productId" th:value="${line.product.productId}"/>
+        <button type="submit" class="m-link-btn" style="color:#a33" data-ripple>Remove</button>
+      </form>
+    </div>
+  </div>
+  <p class="m-body" th:if="${lines.isEmpty()}">Your bag is empty. <a href="/products">Browse the shop →</a></p>
+
+  <div th:unless="${lines.isEmpty()}" style="text-align:right; margin-top:24px">
+    <p class="m-h3" style="font-size:24px">Subtotal: Rs. <span th:text="${#numbers.formatDecimal(subtotal, 1, 'COMMA', 0, 'POINT')}">0</span></p>
+    <a href="/checkout" class="m-btn m-btn--primary m-btn--lg" data-ripple>Proceed to checkout</a>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
