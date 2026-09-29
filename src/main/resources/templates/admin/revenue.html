@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Revenue Report')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('revenue')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <h1 class="m-h1" style="font-size:36px; margin-bottom:20px" data-stagger>Revenue report</h1>
+
+      <form method="get" th:action="@{/admin/revenue}" class="m-toolbar">
+        <label class="m-field">From<input type="date" name="from" class="m-input" th:value="${from}"/></label>
+        <label class="m-field">To<input type="date" name="to" class="m-input" th:value="${to}"/></label>
+        <button type="submit" class="m-btn m-btn--primary m-btn--sm" data-ripple>Apply</button>
+        <a href="/admin/revenue" class="m-btn m-btn--outline m-btn--sm" data-ripple>All time</a>
+      </form>
+
+      <h3 class="m-h3" style="font-size:20px; margin-bottom:8px">Service revenue &mdash; Total: Rs. <span th:text="${#numbers.formatDecimal(totalServiceRevenue, 1, 'COMMA', 0, 'POINT')}">0</span></h3>
+      <div class="m-bars">
+        <div class="m-bar-row" th:each="row : ${serviceRevenue}">
+          <span class="m-bar-row__label" th:text="${row.serviceName} + ' &middot; ' + ${row.stylistName}">Service</span>
+          <span class="m-bar-row__track"><span class="m-bar-row__fill" th:style="'width:' + ${#numbers.formatDecimal(row.revenue.doubleValue() / maxServiceRow.doubleValue() * 100, 1, 'POINT', 1, 'POINT')} + '%'"></span></span>
+          <span class="m-bar-row__value" th:text="'Rs. ' + ${#numbers.formatDecimal(row.revenue, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span>
+        </div>
+      </div>
+      <table class="m-table" style="margin-bottom:40px">
+        <thead><tr><th>Month</th><th>Service</th><th>Stylist</th><th>Revenue</th></tr></thead>
+        <tbody>
+        <tr th:each="row : ${serviceRevenue}">
+          <td th:text="${row.month}">month</td>
+          <td th:text="${row.serviceName}">service</td>
+          <td th:text="${row.stylistName}">stylist</td>
+          <td th:text="'Rs. ' + ${#numbers.formatDecimal(row.revenue, 1, 'COMMA', 0, 'POINT')}">Rs. 0</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <h3 class="m-h3" style="font-size:20px; margin-bottom:8px">Product revenue &mdash; Total: Rs. <span th:text="${#numbers.formatDecimal(totalProductRevenue, 1, 'COMMA', 0, 'POINT')}">0</span></h3>
+      <div class="m-bars">
+        <div class="m-bar-row" th:each="row : ${productRevenue}">
+          <span class="m-bar-row__label" th:text="${row.productName}">Product</span>
+          <span class="m-bar-row__track"><span class="m-bar-row__fill" th:style="'width:' + ${#numbers.formatDecimal(row.revenue.doubleValue() / maxProductRow.doubleValue() * 100, 1, 'POINT', 1, 'POINT')} + '%'"></span></span>
+          <span class="m-bar-row__value" th:text="'Rs. ' + ${#numbers.formatDecimal(row.revenue, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span>
+        </div>
+      </div>
+      <table class="m-table" style="margin-bottom:40px">
+        <thead><tr><th>Month</th><th>Product</th><th>Revenue</th></tr></thead>
+        <tbody>
+        <tr th:each="row : ${productRevenue}">
+          <td th:text="${row.month}">month</td>
+          <td th:text="${row.productName}">product</td>
+          <td th:text="'Rs. ' + ${#numbers.formatDecimal(row.revenue, 1, 'COMMA', 0, 'POINT')}">Rs. 0</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <h3 class="m-h3" style="font-size:20px; margin-bottom:8px">Delivery revenue &mdash; Total: Rs. <span th:text="${#numbers.formatDecimal(totalDeliveryRevenue, 1, 'COMMA', 0, 'POINT')}">0</span></h3>
+      <div class="m-bars">
+        <div class="m-bar-row" th:each="row : ${deliveryRevenue}">
+          <span class="m-bar-row__label" th:text="${row.areaName}">Area</span>
+          <span class="m-bar-row__track"><span class="m-bar-row__fill" th:style="'width:' + ${#numbers.formatDecimal(row.revenue.doubleValue() / maxDeliveryRow.doubleValue() * 100, 1, 'POINT', 1, 'POINT')} + '%'"></span></span>
+          <span class="m-bar-row__value" th:text="'Rs. ' + ${#numbers.formatDecimal(row.revenue, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span>
+        </div>
+      </div>
+      <p class="m-body" th:if="${deliveryRevenue.isEmpty()}">No delivery revenue in this range.</p>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
