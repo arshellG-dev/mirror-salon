@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${category.categoryName})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('services')}"></header>
+<main class="m-container" style="padding-top:40px; padding-bottom:100px">
+  <a href="/services" class="m-link-btn m-link-btn--back" style="display:inline-block; margin-bottom:24px; padding:10px 14px 10px 0; font-size:11.5px; letter-spacing:.22em" data-stagger data-ripple>← All services</a>
+  <div class="m-detail">
+    <div class="m-detail__media" data-stagger>
+      <div class="m-ph m-ph--arch"><span class="m-ph__label" th:text="${category.description}">photo</span></div>
+    </div>
+    <div class="m-detail__content">
+      <div class="m-heading-block" data-stagger>
+        <span class="m-eyebrow" th:text="${group} + ' · ' + ${#numbers.formatInteger(category.categoryId,2)} + ' / 09'">Group · 01 / 09</span>
+        <h1 class="m-h1 m-h1--detail" th:text="${category.categoryName}">Category</h1>
+        <p class="m-body" th:text="${category.description}">Blurb</p>
+      </div>
+
+      <div class="m-price-card" th:each="section : ${sections}" data-stagger>
+        <div class="m-price-card__head">
+          <span class="m-price-card__title" th:text="${section.title}">Section</span>
+          <span class="m-price-card__hint" th:text="${section.hasHalf} ? 'FULL / HALF' : ''"></span>
+        </div>
+        <div class="m-price-row" th:each="row : ${section.rows}">
+          <div style="min-width:0">
+            <span class="m-price-row__name" th:text="${row.name}">Service</span>
+          </div>
+          <div class="m-price-row__price">
+            <span class="m-price-row__amount" th:if="${row.full} != null"
+                  th:text="'Rs. ' + ${#numbers.formatDecimal(row.full.price, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span>
+            <a th:if="${row.half} != null" th:href="@{/booking/new(serviceId=${row.half.serviceId})}"
+               class="m-price-row__half" data-ripple
+               th:text="'Half · Rs. ' + ${#numbers.formatDecimal(row.half.price, 1, 'COMMA', 0, 'POINT')}">Half · Rs. 0</a>
+          </div>
+          <a th:if="${row.full} != null" th:href="@{/booking/new(serviceId=${row.full.serviceId})}" class="m-btn m-btn--row" data-ripple>Book</a>
+          <a th:unless="${row.full} != null" th:href="@{/booking/new(serviceId=${row.half.serviceId})}" class="m-btn m-btn--row" data-ripple>Book</a>
+        </div>
+      </div>
+
+      <div class="m-pager" data-stagger>
+        <a th:href="@{/services/{id}(id=${prev.categoryId})}" class="m-pager__link" data-ripple><span class="m-pager__label">← PREVIOUS</span><span class="m-pager__name" th:text="${prev.categoryName}">Prev</span></a>
+        <a th:href="@{/services/{id}(id=${next.categoryId})}" class="m-pager__link m-pager__link--next" data-ripple><span class="m-pager__label">NEXT →</span><span class="m-pager__name" th:text="${next.categoryName}">Next</span></a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

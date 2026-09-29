@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Services')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('services')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">Services</h1>
+        <a href="/admin/services/new" class="m-btn m-btn--primary m-btn--sm" data-ripple>Add service</a>
+      </div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+      <table class="m-table">
+        <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Duration</th><th>Restricted</th><th>Active</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${services}">
+          <td th:text="${s.serviceName}">Name</td>
+          <td th:text="${s.category.categoryName}">Category</td>
+          <td th:text="'Rs. ' + ${#numbers.formatDecimal(s.price, 1, 'COMMA', 0, 'POINT')}">Rs. 0</td>
+          <td th:text="${s.durationMins} + ' mins'">30</td>
+          <td><span th:if="${s.restricted}" class="m-badge m-badge--gold">Restricted</span><span th:unless="${s.restricted}">&mdash;</span></td>
+          <td><span th:replace="~{fragments/internal-layout :: statusBadge(${s.active} ? 'ACTIVE' : 'INACTIVE')}"></span></td>
+          <td><a th:href="@{/admin/services/{id}/edit(id=${s.serviceId})}" class="m-btn m-btn--row m-btn--xs" data-ripple>Edit</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
