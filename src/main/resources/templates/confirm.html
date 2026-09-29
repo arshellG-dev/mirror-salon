@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Book')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<main class="m-container" style="padding-top:56px; padding-bottom:100px">
+  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
+    <span class="m-eyebrow">RESERVE YOUR CHAIR</span>
+    <h1 class="m-h1">Book an appointment</h1>
+  </div>
+  <div th:replace="~{booking/fragments/stepper :: stepper(${step})}"></div>
+
+  <div class="m-booking">
+    <div class="m-booking__main">
+      <h3 class="m-h3">Confirm your booking</h3>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+      <div class="m-price-card" style="box-shadow:none">
+        <div class="m-price-row" style="border-bottom:none">
+          <div style="min-width:0"><span class="m-price-row__name">Services</span></div>
+          <div class="m-price-row__price">
+            <span class="m-price-row__amount" style="text-align:right">
+              <span th:each="s, iter : ${services}"><span th:text="${s.serviceName}">Service</span><span th:unless="${iter.last}">, </span></span>
+            </span>
+          </div>
+        </div>
+        <div class="m-price-row"><div style="min-width:0"><span class="m-price-row__name">Stylist</span></div><div class="m-price-row__price"><span class="m-price-row__amount" th:text="${stylistName}">Stylist</span></div></div>
+        <div class="m-price-row"><div style="min-width:0"><span class="m-price-row__name">Date &amp; time</span></div><div class="m-price-row__price"><span class="m-price-row__amount" th:text="${date} + ' · ' + ${startTime}">date</span></div></div>
+        <div class="m-price-row"><div style="min-width:0"><span class="m-price-row__name">Duration</span></div><div class="m-price-row__price"><span class="m-price-row__amount" th:text="${totalDuration} + ' mins'">60</span></div></div>
+        <div class="m-price-row" style="border-bottom:none"><div style="min-width:0"><span class="m-price-row__name">Total</span></div><div class="m-price-row__price"><span class="m-price-row__amount" th:text="'Rs. ' + ${#numbers.formatDecimal(totalPrice, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span></div></div>
+      </div>
+      <p class="m-body" style="font-size:13px; opacity:.7">Payment for services is handled in person at the salon — this only reserves your appointment.</p>
+      <form method="post" th:action="@{/booking/confirm}">
+        <div class="m-booking__actions">
+          <a href="/booking/datetime" class="m-link-btn" style="font-size:11.5px; letter-spacing:.22em; padding:12px 8px" data-ripple>← Back</a>
+          <button type="submit" class="m-btn m-btn--primary" style="padding:16px 28px; letter-spacing:.2em" data-ripple>Confirm booking &amp; send code →</button>
+        </div>
+      </form>
+    </div>
+    <aside class="m-summary">
+      <span class="m-eyebrow" style="letter-spacing:.32em">YOUR BOOKING</span>
+      <div class="m-summary__block"><span class="m-summary__label">SERVICE</span>
+        <span class="m-summary__svc"><span th:each="s, iter : ${services}"><span th:text="${s.serviceName}">Service</span><span th:unless="${iter.last}">, </span></span></span>
+        <span class="m-summary__price" th:text="'Rs. ' + ${#numbers.formatDecimal(totalPrice, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span></div>
+      <div class="m-summary__block"><span class="m-summary__label">WHEN</span><span style="font-size:16px" th:text="${date} + ' · ' + ${startTime}">when</span></div>
+      <div class="m-summary__block"><span class="m-summary__label">WHERE</span><span style="font-size:15px; line-height:1.5">51, Hotel Road, Mount Lavinia</span></div>
+    </aside>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
