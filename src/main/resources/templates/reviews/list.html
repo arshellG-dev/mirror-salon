@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reviews')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<main class="m-container m-section" style="max-width:720px">
+  <div class="m-heading-block" style="margin-bottom:12px" data-stagger>
+    <span class="m-eyebrow">KIND WORDS</span>
+    <h1 class="m-h1">From our clients</h1>
+  </div>
+  <p class="m-body" style="margin-bottom:32px">Average rating: <strong th:text="${averageRating} + ' / 5'">0 / 5</strong></p>
+  <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+  <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+  <div class="m-panel" style="margin-bottom:32px" th:if="${session.loggedInCustomerId} != null">
+    <h3 class="m-h3" style="font-size:20px; margin-bottom:16px">Leave a review</h3>
+    <form method="post" th:action="@{/reviews}" style="display:flex; flex-direction:column; gap:14px">
+      <label class="m-field">Rating
+        <select name="rating" class="m-input" style="max-width:200px">
+          <option value="5">5 — Excellent</option>
+          <option value="4">4 — Good</option>
+          <option value="3">3 — Average</option>
+          <option value="2">2 — Poor</option>
+          <option value="1">1 — Very poor</option>
+        </select>
+      </label>
+      <label class="m-field">Comment<textarea name="comment" class="m-input" rows="3" placeholder="Your comment (optional)"></textarea></label>
+      <button type="submit" class="m-btn m-btn--primary" style="align-self:flex-start" data-ripple>Submit review</button>
+    </form>
+  </div>
+  <p class="m-body" th:if="${session.loggedInCustomerId} == null" style="margin-bottom:32px"><a href="/login">Log in</a> to leave a review.</p>
+
+  <div class="m-review-item" style="grid-template-columns:44px 1fr; margin-bottom:12px; cursor:default" th:each="r : ${reviews}">
+    <span class="m-avatar" th:text="${#strings.substring(r.customer.fullName,0,1)}">A</span>
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <span class="m-review-item__name" th:text="${r.customer.fullName}">Name</span>
+        <span class="m-stars" style="font-size:13px" th:text="${#strings.repeat('★', r.rating)}">★★★★★</span>
+      </div>
+      <p class="m-body" style="font-size:15px; max-width:none" th:text="${r.comment}">Comment</p>
+      <div class="m-alert" style="background:rgba(176,141,87,.1); font-size:13px" th:if="${r.replyText}">
+        <strong>Salon reply:</strong> <span th:text="${r.replyText}">reply</span>
+      </div>
+    </div>
+  </div>
+  <p class="m-body" th:if="${reviews.isEmpty()}">No reviews yet.</p>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
