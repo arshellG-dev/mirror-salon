@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Service')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('services')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:560px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:24px" data-stagger>Edit service</h1>
+  <form method="post" th:action="@{/admin/services/{id}(id=${service.serviceId})}" style="display:flex; flex-direction:column; gap:16px">
+    <label class="m-field">Service name<input class="m-input" name="serviceName" th:value="${service.serviceName}" required="required"/></label>
+    <label class="m-field">Description (section label)<textarea class="m-input" name="description" th:text="${service.description}" rows="2"></textarea></label>
+    <div style="display:flex; gap:10px">
+      <label class="m-field" style="flex:1">Price (Rs.)<input class="m-input" type="number" step="0.01" name="price" th:value="${service.price}" required="required"/></label>
+      <label class="m-field" style="flex:1">Duration (mins)<input class="m-input" type="number" name="durationMins" th:value="${service.durationMins}" required="required"/></label>
+    </div>
+    <label class="m-field">Category
+      <select class="m-input" name="categoryId" required="required">
+        <option th:each="c : ${categories}" th:value="${c.categoryId}" th:text="${c.categoryName}" th:selected="${c.categoryId == service.category.categoryId}">Category</option>
+      </select>
+    </label>
+    <label style="display:flex; align-items:center; gap:8px; font-size:14px">
+      <input type="checkbox" name="restricted" value="true" th:checked="${service.restricted}"/> Restricted
+    </label>
+    <label style="display:flex; align-items:center; gap:8px; font-size:14px">
+      <input type="checkbox" name="active" value="true" th:checked="${service.active}"/> Active
+    </label>
+    <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Save</button>
+  </form>
+
+  <hr style="border:none; border-top:1px solid var(--c-line); margin:36px 0"/>
+  <h3 class="m-h3" style="font-size:22px; margin-bottom:8px">Assigned stylists</h3>
+  <p class="m-body" style="font-size:13px">Restricted services can only be assigned here by the admin.</p>
+  <table class="m-table" style="margin-top:16px">
+    <tbody>
+    <tr th:each="st : ${stylists}">
+      <td th:text="${st.staff.firstName} + ' ' + ${st.staff.lastName}">Stylist</td>
+      <td style="text-align:right">
+        <form th:action="@{/admin/services/{sid}/stylists/{stid}(sid=${service.serviceId},stid=${st.staffId})}" method="post" style="display:inline">
+          <input type="hidden" name="assign" th:value="${!assignedStylistIds.contains(st.staffId)}"/>
+          <button type="submit" class="m-btn m-btn--row m-btn--xs" th:text="${assignedStylistIds.contains(st.staffId)} ? 'Remove' : 'Assign'" data-ripple>Assign</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

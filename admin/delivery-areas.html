@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Delivery Areas')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('delivery-areas')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:640px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:24px" data-stagger>Delivery areas</h1>
+  <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+  <form method="post" th:action="@{/admin/delivery-areas}" style="display:flex; gap:10px; align-items:end; flex-wrap:wrap; margin-bottom:28px">
+    <label class="m-field" style="flex:1; min-width:180px">Area name<input type="text" name="areaName" class="m-input" required="required"/></label>
+    <label class="m-field">Fee (Rs.)<input type="number" step="0.01" name="deliveryFee" class="m-input" required="required"/></label>
+    <button type="submit" class="m-btn m-btn--primary" data-ripple>Add</button>
+  </form>
+
+  <div class="m-price-card" th:each="a : ${areas}" style="margin-bottom:14px">
+    <form th:action="@{/admin/delivery-areas/{id}(id=${a.areaId})}" method="post" style="display:flex; gap:10px; align-items:center; padding:16px 0">
+      <input type="text" name="areaName" th:value="${a.areaName}" class="m-input" style="flex:1"/>
+      <input type="number" step="0.01" name="deliveryFee" th:value="${a.deliveryFee}" class="m-input" style="width:120px"/>
+      <label style="display:flex; align-items:center; gap:6px; font-size:13px; white-space:nowrap">
+        <input type="checkbox" name="active" value="true" th:checked="${a.active}"/> Active
+      </label>
+      <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Save</button>
+    </form>
+  </div>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

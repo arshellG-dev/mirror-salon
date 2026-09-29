@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Add Service')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('services')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:520px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:24px" data-stagger>Add service</h1>
+      <form method="post" th:action="@{/admin/services}" style="display:flex; flex-direction:column; gap:16px">
+        <label class="m-field">Service name<input class="m-input" name="serviceName" required="required"/></label>
+        <label class="m-field">Description<textarea class="m-input" name="description" rows="2"></textarea></label>
+        <div style="display:flex; gap:10px">
+          <label class="m-field" style="flex:1">Price (Rs.)<input class="m-input" type="number" step="0.01" name="price" required="required"/></label>
+          <label class="m-field" style="flex:1">Duration (mins)<input class="m-input" type="number" name="durationMins" required="required"/></label>
+        </div>
+        <label class="m-field">Category
+          <select class="m-input" name="categoryId" required="required">
+            <option value="">Select category&hellip;</option>
+            <option th:each="c : ${categories}" th:value="${c.categoryId}" th:text="${c.categoryName}">Category</option>
+          </select>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px">
+          <input type="checkbox" name="restricted" value="true"/> Restricted (only assigned stylists can perform this)
+        </label>
+        <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Add service</button>
+      </form>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

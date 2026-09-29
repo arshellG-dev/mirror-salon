@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Categories')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('categories')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">Categories</h1>
+      </div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+      <div class="m-grid" style="--min:400px; align-items:start">
+        <div>
+          <h3 class="m-h3" style="font-size:18px; margin-bottom:12px">Service categories</h3>
+          <form method="post" th:action="@{/admin/categories/services}" style="display:flex; gap:8px; margin-bottom:14px">
+            <input class="m-input" name="categoryName" placeholder="New category name" required="required" style="flex:1"/>
+            <input class="m-input" name="description" placeholder="Description" style="flex:1"/>
+            <button type="submit" class="m-btn m-btn--primary m-btn--xs" data-ripple>Add</button>
+          </form>
+          <div th:each="c : ${serviceCategories}" class="m-price-card" style="margin-bottom:10px; padding:14px 16px">
+            <form th:action="@{/admin/categories/services/{id}(id=${c.categoryId})}" method="post" style="display:flex; gap:8px; align-items:center">
+              <input class="m-input" name="categoryName" th:value="${c.categoryName}" style="flex:1"/>
+              <input class="m-input" name="description" th:value="${c.description}" style="flex:1"/>
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Save</button>
+            </form>
+            <form th:action="@{/admin/categories/services/{id}/delete(id=${c.categoryId})}" method="post" style="margin-top:8px"
+                  onsubmit="return confirm('Delete this category? This only works if no services use it.');">
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Delete</button>
+            </form>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="m-h3" style="font-size:18px; margin-bottom:12px">Product categories</h3>
+          <form method="post" th:action="@{/admin/categories/products}" style="display:flex; gap:8px; margin-bottom:14px">
+            <input class="m-input" name="categoryName" placeholder="New category name" required="required" style="flex:1"/>
+            <input class="m-input" name="description" placeholder="Description" style="flex:1"/>
+            <button type="submit" class="m-btn m-btn--primary m-btn--xs" data-ripple>Add</button>
+          </form>
+          <div th:each="c : ${productCategories}" class="m-price-card" style="margin-bottom:10px; padding:14px 16px">
+            <form th:action="@{/admin/categories/products/{id}(id=${c.categoryId})}" method="post" style="display:flex; gap:8px; align-items:center">
+              <input class="m-input" name="categoryName" th:value="${c.categoryName}" style="flex:1"/>
+              <input class="m-input" name="description" th:value="${c.description}" style="flex:1"/>
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Save</button>
+            </form>
+            <form th:action="@{/admin/categories/products/{id}/delete(id=${c.categoryId})}" method="post" style="margin-top:8px"
+                  onsubmit="return confirm('Delete this category? This only works if no products use it.');">
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
