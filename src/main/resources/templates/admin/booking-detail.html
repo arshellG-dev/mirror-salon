@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Booking Detail')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('bookings')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:640px">
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:32px">Booking #<span th:text="${booking.bookingId}">1</span></h1>
+        <span th:replace="~{fragments/internal-layout :: statusBadge(${booking.status})}"></span>
+      </div>
+
+      <div class="m-price-card" style="margin-bottom:20px">
+        <div class="m-price-row"><span class="m-price-row__name">Customer</span><span th:text="${booking.customer.fullName} + ' &middot; ' + ${booking.customer.mobileNo}"></span></div>
+        <div class="m-price-row"><span class="m-price-row__name">Stylist</span><span th:text="${booking.stylist.staff.fullName}"></span></div>
+        <div class="m-price-row"><span class="m-price-row__name">Date &amp; time</span><span th:text="${booking.bookingDate} + ' at ' + ${booking.startTime} + '&ndash;' + ${booking.endTime}"></span></div>
+        <div class="m-price-row"><span class="m-price-row__name">Booked via</span><span th:text="${booking.source}"></span></div>
+        <div class="m-price-row" th:if="${booking.createdByStaff != null}"><span class="m-price-row__name">Entered by</span><span th:text="${booking.createdByStaff.fullName}"></span></div>
+        <div class="m-price-row" th:if="${booking.rescheduleCount > 0}"><span class="m-price-row__name">Rescheduled</span><span th:text="${booking.rescheduleCount} + ' time(s)'"></span></div>
+      </div>
+
+      <h3 class="m-h3" style="font-size:18px; margin-bottom:10px">Services (price at time of booking)</h3>
+      <table class="m-table" style="margin-bottom:20px">
+        <thead><tr><th>Service</th><th>Duration</th><th>Price</th></tr></thead>
+        <tbody>
+        <tr th:each="bs : ${booking.services}">
+          <td th:text="${bs.service.serviceName}">Service</td>
+          <td th:text="${bs.durationAtBooking} + ' mins'">30</td>
+          <td th:text="'Rs. ' + ${#numbers.formatDecimal(bs.priceAtBooking, 1, 'COMMA', 0, 'POINT')}">Rs. 0</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="m-alert" th:if="${booking.status.name() == 'CANCELLED'}" style="background:rgba(178,59,59,.08)">
+        Cancelled by <strong th:text="${booking.cancelledBy}">STYLIST</strong> on <span th:text="${booking.cancelledAt}"></span>.
+        <br/>Reason: <span th:text="${booking.cancelReason}"></span>
+      </div>
+
+      <a href="/admin/bookings" class="m-btn m-btn--outline m-btn--sm" data-ripple>&larr; Back to all bookings</a>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

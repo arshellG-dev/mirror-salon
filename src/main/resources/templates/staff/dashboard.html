@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Dashboard')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('dashboard')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:20px" data-stagger th:text="'Welcome, ' + ${staff.firstName}">Welcome</h1>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+      <div class="m-stats" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+        <div class="m-stat">
+          <span class="m-stat__label">Bookings today</span>
+          <span class="m-stat__value" th:text="${todayCount}">0</span>
+        </div>
+        <div class="m-stat">
+          <span class="m-stat__label">Bookings this week</span>
+          <span class="m-stat__value" th:text="${weekCount}">0</span>
+        </div>
+      </div>
+
+      <div class="m-page-head">
+        <h2 class="m-h3" style="font-size:20px">Today's bookings</h2>
+        <a href="/staff/my-bookings" class="m-btn m-btn--outline m-btn--sm" data-ripple>Full schedule</a>
+      </div>
+
+      <div class="m-agenda-row" th:each="b : ${todaysBookings}">
+        <span class="m-agenda-row__time" th:text="${b.startTime}">time</span>
+        <div class="m-agenda-row__body">
+          <span class="m-agenda-row__name" th:text="${b.customer.fullName}">Customer</span>
+          <div class="m-agenda-row__meta"><span th:each="bs, iter : ${b.services}"><span th:text="${bs.service.serviceName}">Service</span><span th:unless="${iter.last}">, </span></span></div>
+        </div>
+        <span th:replace="~{fragments/internal-layout :: statusBadge(${b.status})}"></span>
+        <div class="m-agenda-row__actions" th:if="${b.status.name() == 'CONFIRMED'}">
+          <form th:action="@{/staff/my-bookings/{id}/complete(id=${b.bookingId})}" method="post">
+            <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Mark completed</button>
+          </form>
+          <form th:action="@{/staff/my-bookings/{id}/no-show(id=${b.bookingId})}" method="post">
+            <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>No-show</button>
+          </form>
+        </div>
+      </div>
+      <p class="m-body" th:if="${todaysBookings.isEmpty()}">No bookings today.</p>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

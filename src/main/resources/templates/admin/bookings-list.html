@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('All Bookings')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('bookings')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">All bookings</h1>
+      </div>
+
+      <form method="get" th:action="@{/admin/bookings}" class="m-toolbar">
+        <label class="m-field">From<input type="date" name="from" class="m-input" th:value="${from}"/></label>
+        <label class="m-field">To<input type="date" name="to" class="m-input" th:value="${to}"/></label>
+        <label class="m-field">Stylist
+          <select name="stylistId" class="m-input">
+            <option value="">All stylists</option>
+            <option th:each="st : ${stylists}" th:value="${st.staffId}" th:text="${st.staff.fullName}"
+                    th:selected="${stylistId != null and stylistId == st.staffId}">Stylist</option>
+          </select>
+        </label>
+        <label class="m-field">Status
+          <select name="status" class="m-input">
+            <option value="">All statuses</option>
+            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${status != null and status == s}">Status</option>
+          </select>
+        </label>
+        <button type="submit" class="m-btn m-btn--primary m-btn--sm" data-ripple>Filter</button>
+        <a href="/admin/bookings" class="m-btn m-btn--outline m-btn--sm" data-ripple>Clear</a>
+      </form>
+
+      <table class="m-table">
+        <thead><tr><th>Date</th><th>Time</th><th>Customer</th><th>Stylist</th><th>Service(s)</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="b : ${bookings}">
+          <td th:text="${b.bookingDate}">date</td>
+          <td th:text="${b.startTime}">time</td>
+          <td th:text="${b.customer.fullName}">Customer</td>
+          <td th:text="${b.stylist.staff.fullName}">Stylist</td>
+          <td><span th:each="bs, iter : ${b.services}"><span th:text="${bs.service.serviceName}">Service</span><span th:unless="${iter.last}">, </span></span></td>
+          <td><span th:replace="~{fragments/internal-layout :: statusBadge(${b.status})}"></span></td>
+          <td><a th:href="@{/admin/bookings/{id}(id=${b.bookingId})}" class="m-btn m-btn--row m-btn--xs" data-ripple>View</a></td>
+        </tr>
+        </tbody>
+      </table>
+      <p class="m-body" th:if="${bookings.isEmpty()}">No bookings match these filters.</p>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

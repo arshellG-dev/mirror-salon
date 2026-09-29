@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Schedule')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('schedule')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:16px" data-stagger>My schedule</h1>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+      <div class="m-week-nav">
+        <a th:href="@{/staff/my-bookings(week=${prevWeek})}" class="m-btn m-btn--outline m-btn--sm" data-ripple>&larr; Previous week</a>
+        <span class="m-meta" th:text="${weekStart} + ' &ndash; ' + ${weekEnd}">Week</span>
+        <a th:href="@{/staff/my-bookings(week=${nextWeek})}" class="m-btn m-btn--outline m-btn--sm" data-ripple>Next week &rarr;</a>
+      </div>
+
+      <div class="m-agenda-day" th:each="entry : ${byDay}">
+        <div class="m-agenda-day__head" th:text="${entry.key}">Day</div>
+        <div class="m-agenda-row" th:each="b : ${entry.value}">
+          <span class="m-agenda-row__time" th:text="${b.startTime}">time</span>
+          <div class="m-agenda-row__body">
+            <span class="m-agenda-row__name" th:text="${b.customer.fullName}">Customer</span>
+            <div class="m-agenda-row__meta"><span th:each="bs, iter : ${b.services}"><span th:text="${bs.service.serviceName}">Service</span><span th:unless="${iter.last}">, </span></span></div>
+          </div>
+          <span th:replace="~{fragments/internal-layout :: statusBadge(${b.status})}"></span>
+          <div class="m-agenda-row__actions" th:if="${b.status.name() == 'CONFIRMED'}">
+            <form th:action="@{/staff/my-bookings/{id}/complete(id=${b.bookingId})}" method="post"
+                  th:if="${now.isAfter(T(java.time.LocalDateTime).of(b.bookingDate, b.endTime))}">
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Mark completed</button>
+            </form>
+            <form th:action="@{/staff/my-bookings/{id}/no-show(id=${b.bookingId})}" method="post">
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>No-show</button>
+            </form>
+            <form th:action="@{/staff/my-bookings/{id}/cancel(id=${b.bookingId})}" method="post" onsubmit="return setReason(this);">
+              <input type="hidden" name="reason" value=""/>
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Cancel</button>
+            </form>
+          </div>
+        </div>
+        <p class="m-body" style="font-size:13px; opacity:.6" th:if="${entry.value.isEmpty()}">No bookings.</p>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+function setReason(form) {
+    var reason = prompt('Reason for cancelling?');
+    if (!reason) { return false; }
+    form.querySelector('input[name=reason]').value = reason;
+    return true;
+}
+</script>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Availability')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('availability')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:760px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:8px" data-stagger>My availability</h1>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+      <h3 class="m-h3" style="font-size:18px; margin-bottom:8px">Working hours</h3>
+      <p class="m-body" style="font-size:13px">Your base weekly schedule, set by the admin. Contact them to change it.</p>
+      <div class="m-hours-grid">
+        <div class="m-hours-grid__day" th:each="day : ${#numbers.sequence(1,7)}">
+          <span class="m-hours-grid__day-label" th:text="${dayNames[day]}">Day</span>
+          <span class="m-hours-grid__day-value" th:if="${hoursByDay.get(day)} != null"
+                th:text="${hoursByDay.get(day).startTime} + ' &ndash; ' + ${hoursByDay.get(day).endTime}">9:00–17:00</span>
+          <span class="m-hours-grid__day-value m-hours-grid__day-value--off" th:if="${hoursByDay.get(day)} == null">Off</span>
+        </div>
+      </div>
+
+      <h3 class="m-h3" style="font-size:18px; margin:32px 0 8px">Unavailable times</h3>
+      <p class="m-body" style="font-size:13px">Block off personal time off &mdash; this is yours to manage directly.</p>
+      <form method="post" th:action="@{/staff/unavailability}" style="display:flex; gap:10px; flex-wrap:wrap; align-items:end; margin:16px 0 24px">
+        <label class="m-field">Date<input type="date" name="blockDate" class="m-input" required="required"/></label>
+        <label class="m-field">From<input type="time" name="startTime" class="m-input" required="required"/></label>
+        <label class="m-field">To<input type="time" name="endTime" class="m-input" required="required"/></label>
+        <label class="m-field">Reason<input type="text" name="reason" class="m-input" placeholder="Optional"/></label>
+        <button type="submit" class="m-btn m-btn--primary" data-ripple>Add</button>
+      </form>
+
+      <table class="m-table">
+        <thead><tr><th>Date</th><th>From</th><th>To</th><th>Reason</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="b : ${blocks}">
+          <td th:text="${b.blockDate}">date</td>
+          <td th:text="${b.startTime}">start</td>
+          <td th:text="${b.endTime}">end</td>
+          <td th:text="${b.reason}">reason</td>
+          <td>
+            <form th:action="@{/staff/unavailability/delete}" method="post">
+              <input type="hidden" name="blockDate" th:value="${b.blockDate}"/>
+              <input type="hidden" name="startTime" th:value="${b.startTime}"/>
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Remove</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <p class="m-body" th:if="${blocks.isEmpty()}">No unavailable times blocked.</p>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
