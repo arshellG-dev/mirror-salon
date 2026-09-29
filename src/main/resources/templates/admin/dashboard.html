@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('dashboard')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">Dashboard</h1>
+      </div>
+
+      <div class="m-stats" data-stagger>
+        <div class="m-stat">
+          <span class="m-stat__label">Today's bookings</span>
+          <span class="m-stat__value" th:text="${todaysBookingCount}">0</span>
+        </div>
+        <a href="/admin/revenue" class="m-stat m-stat--link">
+          <span class="m-stat__label">This month's revenue</span>
+          <span class="m-stat__value" th:text="'Rs. ' + ${#numbers.formatDecimal(monthRevenue, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span>
+          <span class="m-stat__hint">Services + products &rarr;</span>
+        </a>
+        <a href="/staff/payments" class="m-stat m-stat--link" th:classappend="${pendingPaymentCount > 0} ? 'm-stat--warn'">
+          <span class="m-stat__label">Pending payments</span>
+          <span class="m-stat__value" th:text="${pendingPaymentCount}">0</span>
+        </a>
+        <a href="/admin/reviews" class="m-stat m-stat--link" th:classappend="${unrepliedReviewCount > 0} ? 'm-stat--warn'">
+          <span class="m-stat__label">Unreplied reviews</span>
+          <span class="m-stat__value" th:text="${unrepliedReviewCount}">0</span>
+        </a>
+        <a href="/admin/products" class="m-stat m-stat--link" th:classappend="${lowStockCount > 0} ? 'm-stat--warn'">
+          <span class="m-stat__label">Low-stock products</span>
+          <span class="m-stat__value" th:text="${lowStockCount}">0</span>
+        </a>
+        <a href="/admin/staff" class="m-stat m-stat--link">
+          <span class="m-stat__label">Active staff</span>
+          <span class="m-stat__value" th:text="${activeStaffCount}">0</span>
+        </a>
+      </div>
+
+      <div class="m-page-head">
+        <h2 class="m-h3" style="font-size:20px">Today's schedule</h2>
+        <a href="/admin/bookings" class="m-btn m-btn--outline m-btn--sm" data-ripple>View all bookings</a>
+      </div>
+      <table class="m-table">
+        <thead><tr><th>Time</th><th>Customer</th><th>Stylist</th><th>Service(s)</th><th>Status</th></tr></thead>
+        <tbody>
+        <tr th:each="b : ${todaysSchedule}">
+          <td th:text="${b.startTime}">time</td>
+          <td th:text="${b.customer.fullName}">Customer</td>
+          <td th:text="${b.stylist.staff.fullName}">Stylist</td>
+          <td><span th:each="bs, iter : ${b.services}"><span th:text="${bs.service.serviceName}">Service</span><span th:unless="${iter.last}">, </span></span></td>
+          <td><span th:replace="~{fragments/internal-layout :: statusBadge(${b.status})}"></span></td>
+        </tr>
+        </tbody>
+      </table>
+      <p class="m-body" th:if="${todaysSchedule.isEmpty()}">No bookings today.</p>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

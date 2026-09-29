@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- Sidebar: renders a different nav set per role. "Don't show admin menu items
+     greyed out to a stylist — simply don't render them" (spec §5). -->
+<aside th:fragment="sidebar(active)" class="m-sidebar">
+  <a href="/" class="m-sidebar__brand" style="display:block">
+    <span class="m-logo__word" style="display:block; font-family:var(--f-serif); font-size:20px; letter-spacing:.18em">MIRROR</span>
+    <span class="m-logo__sub" style="display:block; font-size:10px; letter-spacing:.3em; margin-top:2px">MAKEOVER PLACE</span>
+    <span class="m-sidebar__role" th:text="${currentStaffRole}">ROLE</span>
+  </a>
+
+  <nav class="m-sidebar__nav" sec:authorize="hasRole('ADMIN')">
+    <a href="/admin" class="m-sidebar__link" th:classappend="${active == 'dashboard'} ? 'is-active'"><span class="m-sidebar__icon">&#9635;</span>Dashboard</a>
+    <a href="/admin/bookings" class="m-sidebar__link" th:classappend="${active == 'bookings'} ? 'is-active'"><span class="m-sidebar__icon">&#128197;</span>Bookings</a>
+    <a href="/admin/staff" class="m-sidebar__link" th:classappend="${active == 'staff'} ? 'is-active'"><span class="m-sidebar__icon">&#128100;</span>Staff</a>
+    <a href="/admin/services" class="m-sidebar__link" th:classappend="${active == 'services'} ? 'is-active'"><span class="m-sidebar__icon">&#9986;</span>Services</a>
+    <a href="/admin/products" class="m-sidebar__link" th:classappend="${active == 'products'} ? 'is-active'"><span class="m-sidebar__icon">&#129529;</span>Products</a>
+    <a href="/admin/categories" class="m-sidebar__link" th:classappend="${active == 'categories'} ? 'is-active'"><span class="m-sidebar__icon">&#128194;</span>Categories</a>
+    <a href="/admin/delivery-areas" class="m-sidebar__link" th:classappend="${active == 'delivery-areas'} ? 'is-active'"><span class="m-sidebar__icon">&#128663;</span>Delivery Areas</a>
+    <a href="/admin/holidays" class="m-sidebar__link" th:classappend="${active == 'holidays'} ? 'is-active'"><span class="m-sidebar__icon">&#127796;</span>Holidays</a>
+    <a href="/admin/customers" class="m-sidebar__link" th:classappend="${active == 'customers'} ? 'is-active'"><span class="m-sidebar__icon">&#128218;</span>Customers</a>
+    <a href="/admin/reviews" class="m-sidebar__link" th:classappend="${active == 'reviews'} ? 'is-active'"><span class="m-sidebar__icon">&#9733;</span>Reviews</a>
+    <a href="/staff/payments" class="m-sidebar__link" th:classappend="${active == 'payments'} ? 'is-active'"><span class="m-sidebar__icon">&#128179;</span>Pending Payments</a>
+    <a href="/admin/revenue" class="m-sidebar__link" th:classappend="${active == 'revenue'} ? 'is-active'"><span class="m-sidebar__icon">&#128202;</span>Reports</a>
+    <a href="/admin/notifications" class="m-sidebar__link" th:classappend="${active == 'notifications'} ? 'is-active'"><span class="m-sidebar__icon">&#128276;</span>Notifications Log</a>
+  </nav>
+
+  <nav class="m-sidebar__nav" sec:authorize="hasRole('STYLIST')">
+    <a href="/staff/dashboard" class="m-sidebar__link" th:classappend="${active == 'dashboard'} ? 'is-active'"><span class="m-sidebar__icon">&#9635;</span>Dashboard</a>
+    <a href="/staff/my-bookings" class="m-sidebar__link" th:classappend="${active == 'schedule'} ? 'is-active'"><span class="m-sidebar__icon">&#128197;</span>My Schedule</a>
+    <a href="/staff/unavailability" class="m-sidebar__link" th:classappend="${active == 'availability'} ? 'is-active'"><span class="m-sidebar__icon">&#128343;</span>My Availability</a>
+    <a href="/staff/my-services" class="m-sidebar__link" th:classappend="${active == 'services'} ? 'is-active'"><span class="m-sidebar__icon">&#9986;</span>My Services</a>
+    <a href="/staff/my-profile" class="m-sidebar__link" th:classappend="${active == 'profile'} ? 'is-active'"><span class="m-sidebar__icon">&#128100;</span>My Profile</a>
+  </nav>
+
+  <nav class="m-sidebar__nav" sec:authorize="hasRole('RECEPTIONIST')">
+    <a href="/staff/dashboard" class="m-sidebar__link" th:classappend="${active == 'dashboard'} ? 'is-active'"><span class="m-sidebar__icon">&#9635;</span>Dashboard</a>
+    <a href="/staff/payments" class="m-sidebar__link" th:classappend="${active == 'payments'} ? 'is-active'"><span class="m-sidebar__icon">&#128179;</span>Pending Payments</a>
+  </nav>
+
+  <div class="m-sidebar__foot"><a href="/">&larr; Back to public site</a></div>
+</aside>
+
+<!-- Top bar: staff name, role badge, logout. Shared by every internal page. -->
+<header th:fragment="topbar" class="m-topbar">
+  <div class="m-topbar__user">
+    <span class="m-topbar__name" th:text="${currentStaffName}">Name</span>
+    <span class="m-role-badge" th:text="${currentStaffRole}">ROLE</span>
+  </div>
+  <form th:action="@{/staff/logout}" method="post" style="display:inline">
+    <button type="submit" class="m-topbar__logout" data-ripple>Logout</button>
+  </form>
+</header>
+
+<!-- Placed at the END of the page body (after <main>) by every internal
+     template — mirror.js's setup code runs at script-parse time and needs
+     the full page already in the DOM (same reason the public footer fragment
+     carries its own copy of this tag). -->
+<script th:fragment="scripts" th:src="@{/js/mirror.js}"></script>
+
+<!-- Generic status badge: derives its color class from the enum value text
+     (e.g. PENDING_OTP -> m-status--pending-otp). One fragment, every table. -->
+<span th:fragment="statusBadge(value)" class="m-status"
+      th:classappend="'m-status--' + ${#strings.toLowerCase(#strings.replace(value,'_','-'))}"
+      th:text="${#strings.replace(value,'_',' ')}">STATUS</span>
+
+</body>
+</html>

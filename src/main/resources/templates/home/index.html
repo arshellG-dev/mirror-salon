@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('home')}"></header>
+<main>
+  <section class="m-container m-hero">
+    <div class="m-hero__copy">
+      <div class="m-eyebrow m-eyebrow--rule" data-stagger>MAKEOVER PLACE · MOUNT LAVINIA</div>
+      <h1 class="m-hero-title" data-stagger>Your reflection, <em class="m-accent">refined.</em></h1>
+      <p class="m-lead" data-stagger>Sothys facials, threading, nails, waxing and complete hair care — in a calm, warm studio on Hotel Road.</p>
+      <div class="m-hero__ctas" data-stagger>
+        <a href="/booking/new" class="m-btn m-btn--primary m-btn--lg" data-ripple>Book an appointment</a>
+        <a href="/services" class="m-btn m-btn--outline m-btn--lg" data-ripple>View price list</a>
+      </div>
+    </div>
+    <div class="m-hero__media" data-stagger>
+      <div class="m-ph m-hero__image"><span class="m-ph__label">salon interior · blush &amp; brown decor</span></div>
+      <a th:if="${heroService}" th:href="@{/booking/new(serviceId=${heroService.serviceId})}" class="m-float-card" data-ripple>
+        <span class="m-meta" style="font-size:10px">SOTHYS · SIGNATURE</span>
+        <span class="m-float-card__title">Hydra Facial</span>
+        <span class="m-float-card__price">Rs. 17,500 <span>Book →</span></span>
+      </a>
+    </div>
+  </section>
+
+  <div class="m-marquee" aria-hidden="true">
+    <div class="m-marquee__track">
+      <span class="m-marquee__item">Facials</span>
+      <span class="m-marquee__item">Threading</span>
+      <span class="m-marquee__item">Nails</span>
+      <span class="m-marquee__item">Waxing</span>
+      <span class="m-marquee__item">Haircuts</span>
+      <span class="m-marquee__item">Hair Setting</span>
+      <span class="m-marquee__item">Hair Color</span>
+      <span class="m-marquee__item">Hair Relaxing</span>
+      <span class="m-marquee__item">Hair Treatments</span>
+      <span class="m-marquee__item">Facials</span>
+      <span class="m-marquee__item">Threading</span>
+      <span class="m-marquee__item">Nails</span>
+      <span class="m-marquee__item">Waxing</span>
+      <span class="m-marquee__item">Haircuts</span>
+      <span class="m-marquee__item">Hair Setting</span>
+      <span class="m-marquee__item">Hair Color</span>
+      <span class="m-marquee__item">Hair Relaxing</span>
+      <span class="m-marquee__item">Hair Treatments</span>
+    </div>
+  </div>
+
+  <section class="m-container" style="padding-top:110px; padding-bottom:40px">
+    <div class="m-row-between" style="margin-bottom:48px" data-reveal>
+      <div class="m-heading-block">
+        <span class="m-eyebrow">THE PRICE LIST</span>
+        <h2 class="m-h2">Two studios, one standard.</h2>
+      </div>
+      <a href="/services" class="m-link-btn m-link-btn--grow" data-ripple>All services →</a>
+    </div>
+    <div class="m-studios">
+      <div class="m-studio" data-reveal>
+        <div class="m-studio__head">
+          <h3 class="m-studio__title">Face &amp; Body</h3>
+          <span class="m-meta" style="font-size:11px; letter-spacing:.28em">4 CATEGORIES</span>
+        </div>
+        <a th:each="s : ${faceBody}" th:href="@{/services/{id}(id=${s.category.categoryId})}" class="m-list-row" data-ripple>
+          <span class="m-list-row__num" th:text="${#numbers.formatInteger(s.category.categoryId,2)}">01</span>
+          <span class="m-list-row__name" th:text="${s.category.categoryName}">Category</span>
+          <span class="m-list-row__price" th:text="'from Rs. ' + ${#numbers.formatDecimal(s.fromPrice, 1, 'COMMA', 0, 'POINT')}">from Rs. 0</span>
+          <span class="m-list-row__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="m-studio" data-reveal>
+        <div class="m-studio__head">
+          <h3 class="m-studio__title">Hair</h3>
+          <span class="m-meta" style="font-size:11px; letter-spacing:.28em">5 CATEGORIES</span>
+        </div>
+        <a th:each="s : ${hair}" th:href="@{/services/{id}(id=${s.category.categoryId})}" class="m-list-row" data-ripple>
+          <span class="m-list-row__num" th:text="${#numbers.formatInteger(s.category.categoryId,2)}">05</span>
+          <span class="m-list-row__name" th:text="${s.category.categoryName}">Category</span>
+          <span class="m-list-row__price" th:text="'from Rs. ' + ${#numbers.formatDecimal(s.fromPrice, 1, 'COMMA', 0, 'POINT')}">from Rs. 0</span>
+          <span class="m-list-row__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="m-container" style="padding-top:90px; padding-bottom:90px">
+    <div class="m-heading-block" style="margin-bottom:40px" data-reveal>
+      <span class="m-eyebrow">MOST REQUESTED</span>
+      <h2 class="m-h2">Signature treatments</h2>
+    </div>
+    <div class="m-grid m-grid--fit" style="--min:300px; gap:24px">
+      <article class="m-card" th:each="s : ${signature}" data-reveal>
+        <div class="m-ph m-ph--4x3"><span class="m-ph__label" th:text="${s.category.description}">photo</span></div>
+        <div class="m-card__body" style="padding:24px 26px 26px; gap:10px">
+          <span class="m-meta" th:text="${s.category.categoryName}">Category</span>
+          <h3 class="m-card__title" th:text="${s.serviceName}">Service</h3>
+          <div class="m-card__footer m-card__footer--plain">
+            <span class="m-card__price" style="font-size:15px" th:text="'Rs. ' + ${#numbers.formatDecimal(s.price, 1, 'COMMA', 0, 'POINT')} + (${s.restricted} ? '+' : '')">Rs. 0</span>
+            <a th:href="@{/booking/new(serviceId=${s.serviceId})}" class="m-btn m-btn--primary m-btn--sm" data-ripple>Book</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="m-container" style="padding-top:20px; padding-bottom:110px" data-reviews th:if="${!reviews.isEmpty()}">
+    <div class="m-row-between" style="margin-bottom:40px" data-reveal>
+      <div class="m-heading-block">
+        <span class="m-eyebrow">KIND WORDS</span>
+        <h2 class="m-h2">From our clients</h2>
+      </div>
+      <div style="display:flex; gap:10px">
+        <button type="button" class="m-icon-btn m-icon-btn--light" data-rev-prev data-ripple aria-label="Previous review">←</button>
+        <button type="button" class="m-icon-btn m-icon-btn--dark" data-rev-next data-ripple aria-label="Next review">→</button>
+      </div>
+    </div>
+    <div class="m-reviews" data-reveal>
+      <div class="m-review-feature" data-rev-feature aria-live="polite">
+        <span class="m-review-feature__mark" aria-hidden="true">"</span>
+        <p class="m-review-feature__text" data-rev-text th:text="${reviews[0].comment}">Review text</p>
+        <div class="m-review-feature__foot">
+          <div class="m-stack" style="gap:4px">
+            <span class="m-review-feature__name" data-rev-name th:text="${reviews[0].customer.fullName}">Client</span>
+            <span class="m-review-feature__svc" data-rev-svc>The Mirror</span>
+          </div>
+          <span class="m-stars" aria-label="rating" th:text="${#strings.repeat('★', reviews[0].rating)}">★★★★★</span>
+        </div>
+      </div>
+      <div class="m-review-list">
+        <button type="button" th:each="r, iter : ${reviews}" class="m-review-item" th:classappend="${iter.index == 0} ? 'is-active'"
+                th:data-rev-index="${iter.index}" th:data-name="${r.customer.fullName}" data-svc="The Mirror" th:data-text="${r.comment}" data-ripple>
+          <span class="m-avatar" th:text="${#strings.substring(r.customer.fullName,0,1)}">A</span>
+          <span style="min-width:0"><span class="m-review-item__name" th:text="${r.customer.fullName}">Name</span><span class="m-review-item__snippet" th:text="${r.comment}">Snippet</span></span>
+          <span class="m-review-item__svc" th:text="${#strings.repeat('★', r.rating)}">★★★★★</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

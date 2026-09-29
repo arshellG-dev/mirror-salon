@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Visit')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('visit')}"></header>
+<main class="m-container m-section">
+  <div class="m-heading-block" style="margin-bottom:40px" data-stagger>
+    <span class="m-eyebrow">VISIT US</span>
+    <h1 class="m-h1" style="line-height:1">On Hotel Road,<br/><em class="m-accent">Mount Lavinia.</em></h1>
+  </div>
+  <div class="m-visit">
+    <div class="m-panel m-stack" style="gap:28px; box-shadow:none" data-stagger>
+      <div class="m-stack" style="gap:8px">
+        <span class="m-eyebrow" style="letter-spacing:.3em">ADDRESS</span>
+        <span class="m-visit__address">51, Hotel Road<br/>Mount Lavinia</span>
+      </div>
+      <div class="m-stack" style="gap:12px">
+        <span class="m-eyebrow" style="letter-spacing:.3em">CALL</span>
+        <a href="tel:0776682015" class="m-tel" data-ripple>0776-682-015 <span aria-hidden="true">→</span></a>
+        <a href="tel:0117162227" class="m-tel" data-ripple>0117-162-227 <span aria-hidden="true">→</span></a>
+      </div>
+      <a href="/booking/new" class="m-btn m-btn--primary m-btn--md" style="align-self:flex-start" data-ripple>Or book online</a>
+    </div>
+    <div class="m-ph m-map" data-stagger><span class="m-ph__label">map · 51 Hotel Road, Mount Lavinia</span></div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
