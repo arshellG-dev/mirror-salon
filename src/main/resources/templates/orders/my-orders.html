@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Orders')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<main class="m-container m-section">
+  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
+    <span class="m-eyebrow">ORDER HISTORY</span>
+    <h1 class="m-h1">My orders</h1>
+  </div>
+
+  <div class="m-price-card" th:each="o : ${orders}" style="margin-bottom:20px">
+    <div class="m-price-card__head">
+      <span class="m-price-card__title" th:text="'Order #' + ${o.orderId}">Order</span>
+      <span class="m-meta" th:text="${o.orderStatus}">STATUS</span>
+    </div>
+    <div class="m-price-row" th:each="item : ${o.items}">
+      <div style="min-width:0"><span class="m-price-row__name" th:text="${item.product.productName} + ' × ' + ${item.quantity}">item</span></div>
+      <div class="m-price-row__price"><span class="m-price-row__amount" th:text="'Rs. ' + ${#numbers.formatDecimal(item.unitPrice, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span></div>
+    </div>
+    <div class="m-price-row" style="border-bottom:none">
+      <div style="min-width:0"><span class="m-price-row__name" th:text="'Delivery to ' + ${o.city} + ' (' + ${o.area.areaName} + ')'">delivery</span></div>
+      <div class="m-price-row__price"><span class="m-price-row__amount" th:text="'Rs. ' + ${#numbers.formatDecimal(o.deliveryFee, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span></div>
+    </div>
+  </div>
+  <p class="m-body" th:if="${orders.isEmpty()}">You have no orders yet. <a href="/products">Browse the shop →</a></p>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

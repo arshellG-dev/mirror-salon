@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Checkout')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('shop')}"></header>
+<main class="m-container m-section" style="max-width:560px">
+  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
+    <span class="m-eyebrow">ALMOST THERE</span>
+    <h1 class="m-h1">Checkout</h1>
+  </div>
+  <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+  <h3 class="m-h3" style="font-size:20px">Delivery details</h3>
+  <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:28px">
+    <label class="m-field">Recipient name<input id="recipientName" class="m-input" th:value="${fullName}"/></label>
+    <label class="m-field">Contact number<input id="contactNo" class="m-input" placeholder="07X XXX XXXX"/></label>
+    <label class="m-field">Address line<input id="addressLine" class="m-input"/></label>
+    <label class="m-field">City<input id="city" class="m-input"/></label>
+    <label class="m-field">Delivery area
+      <select id="areaId" class="m-input">
+        <option value="">Select&hellip;</option>
+        <option th:each="a : ${areas}" th:value="${a.areaId}" th:text="${a.areaName} + ' (Rs. ' + ${#numbers.formatDecimal(a.deliveryFee,1,'COMMA',0,'POINT')} + ')'">Area</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="m-chips" style="margin-bottom:20px">
+    <button type="button" class="m-chip is-active" onclick="showPay('cod', this)" data-ripple>Cash on Delivery</button>
+    <button type="button" class="m-chip" onclick="showPay('bank', this)" data-ripple>Bank Transfer</button>
+  </div>
+
+  <form id="cod-form" th:action="@{/checkout/cod}" method="post" onsubmit="return copyShared(this);">
+    <input type="hidden" name="recipientName"/><input type="hidden" name="contactNo"/>
+    <input type="hidden" name="addressLine"/><input type="hidden" name="city"/><input type="hidden" name="areaId"/>
+    <p class="m-body" style="font-size:14px">Pay in cash when your order is delivered.</p>
+    <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Place order (COD)</button>
+  </form>
+
+  <form id="bank-form" th:action="@{/checkout/bank-transfer}" method="post" enctype="multipart/form-data" onsubmit="return copyShared(this);" hidden>
+    <input type="hidden" name="recipientName"/><input type="hidden" name="contactNo"/>
+    <input type="hidden" name="addressLine"/><input type="hidden" name="city"/><input type="hidden" name="areaId"/>
+    <label class="m-field">Bank reference (optional)<input type="text" name="bankReference" class="m-input"/></label>
+    <label class="m-field" style="margin:14px 0">Upload deposit slip<input type="file" name="slip" class="m-input" required="required"/></label>
+    <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Place order (Bank Transfer)</button>
+  </form>
+</main>
+<script th:inline="javascript">
+function showPay(which, btn) {
+  document.getElementById('cod-form').hidden = which !== 'cod';
+  document.getElementById('bank-form').hidden = which !== 'bank';
+  btn.parentElement.querySelectorAll('.m-chip').forEach(function (c) { c.classList.remove('is-active'); });
+  btn.classList.add('is-active');
+}
+function copyShared(form) {
+  ['recipientName','contactNo','addressLine','city','areaId'].forEach(function (name) {
+    var shared = document.getElementById(name);
+    var hidden = form.querySelector('input[name="' + name + '"]');
+    hidden.value = shared.value;
+  });
+  return true;
+}
+</script>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

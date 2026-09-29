@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Moderate Reviews')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('reviews')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:720px" data-filter-scope>
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:16px" data-stagger>Moderate reviews</h1>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+      <div class="m-chips" style="margin-bottom:24px">
+        <button type="button" class="m-chip is-active" data-filter="all" data-ripple aria-pressed="true">All</button>
+        <button type="button" class="m-chip" data-filter="unreplied" data-ripple aria-pressed="false">Unreplied</button>
+        <button type="button" class="m-chip" data-filter="hidden" data-ripple aria-pressed="false">Hidden</button>
+      </div>
+
+      <div class="m-price-card" th:each="r : ${reviews}" style="margin-bottom:20px" data-item
+           th:attr="data-cat=${r.hidden} ? 'hidden' : (${r.replyText == null} ? 'unreplied' : 'visible')">
+        <div class="m-price-card__head">
+          <span class="m-price-card__title" style="text-transform:none; letter-spacing:normal; font-family:var(--f-serif); font-size:20px; color:var(--c-heading)"
+                th:text="${r.customer.fullName} + ' — ' + ${r.rating} + '/5'">Name</span>
+          <span th:replace="~{fragments/internal-layout :: statusBadge(${r.hidden} ? 'HIDDEN' : 'VISIBLE')}"></span>
+        </div>
+        <p class="m-body" style="font-size:14px" th:text="${r.comment}">Comment</p>
+        <div class="m-alert" style="background:rgba(176,141,87,.1); font-size:13px" th:if="${r.replyText}">
+          <strong>Reply:</strong> <span th:text="${r.replyText}">reply</span>
+        </div>
+        <form th:action="@{/admin/reviews/{id}/reply(id=${r.reviewId})}" method="post" style="display:flex; gap:8px; margin-bottom:10px">
+          <input type="text" name="replyText" class="m-input" style="flex:1" placeholder="Write a public reply&hellip;" th:value="${r.replyText}"/>
+          <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Reply</button>
+        </form>
+        <div style="display:flex; gap:8px">
+          <form th:action="@{/admin/reviews/{id}/hide(id=${r.reviewId})}" method="post" th:unless="${r.hidden}">
+            <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Hide</button>
+          </form>
+          <form th:action="@{/admin/reviews/{id}/unhide(id=${r.reviewId})}" method="post" th:if="${r.hidden}">
+            <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Unhide</button>
+          </form>
+          <form th:action="@{/admin/reviews/{id}/delete(id=${r.reviewId})}" method="post" onsubmit="return confirm('Delete this review permanently?');">
+            <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Delete</button>
+          </form>
+        </div>
+      </div>
+      <p class="m-body" th:if="${reviews.isEmpty()}">No reviews yet.</p>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

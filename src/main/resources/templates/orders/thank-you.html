@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Order Placed')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<main class="m-container" style="padding-top:56px; padding-bottom:100px; max-width:560px">
+  <div class="m-success">
+    <div class="m-success__check" aria-hidden="true">✓</div>
+    <h2 class="m-success__title">Thank you!</h2>
+    <p class="m-body">Your order <strong>#<span th:text="${orderId}">1</span></strong> has been placed.
+      Note: once placed, an order cannot be cancelled online.</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding-top:10px">
+      <a href="/orders/my" class="m-btn m-btn--primary m-btn--md" data-ripple>View my orders</a>
+      <a href="/" class="m-btn m-btn--outline m-btn--md" data-ripple>Back home</a>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
