@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Product')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('products')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:520px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:24px" data-stagger>Edit product</h1>
+  <form method="post" th:action="@{/admin/products/{id}(id=${product.productId})}" style="display:flex; flex-direction:column; gap:16px">
+    <label class="m-field">Product name<input class="m-input" name="productName" th:value="${product.productName}" required="required"/></label>
+    <div style="display:flex; gap:10px">
+      <label class="m-field" style="flex:1">Brand<input class="m-input" name="brand" th:value="${product.brand}"/></label>
+      <label class="m-field" style="flex:1">Size<input class="m-input" name="size" th:value="${product.size}"/></label>
+    </div>
+    <label class="m-field">Description<textarea class="m-input" name="description" th:text="${product.description}" rows="2"></textarea></label>
+    <div style="display:flex; gap:10px">
+      <label class="m-field" style="flex:1">Price (Rs.)<input class="m-input" type="number" step="0.01" name="price" th:value="${product.price}" required="required"/></label>
+      <label class="m-field" style="flex:1">Stock quantity<input class="m-input" type="number" name="stockQty" th:value="${product.stockQty}" required="required"/></label>
+    </div>
+    <label class="m-field">Category
+      <select class="m-input" name="categoryId" required="required">
+        <option th:each="c : ${categories}" th:value="${c.categoryId}" th:text="${c.categoryName}" th:selected="${c.categoryId == product.category.categoryId}">Category</option>
+      </select>
+    </label>
+    <label style="display:flex; align-items:center; gap:8px; font-size:14px">
+      <input type="checkbox" name="active" value="true" th:checked="${product.active}"/> Active
+    </label>
+    <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Save</button>
+      </form>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
