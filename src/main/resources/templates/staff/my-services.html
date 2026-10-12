@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Services')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('services')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:640px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:8px" data-stagger>My services</h1>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <p class="m-body" style="font-size:13px">Toggle a service on or off &mdash; it takes effect immediately, no approval needed.</p>
+
+      <form method="post" th:action="@{/staff/my-services}">
+        <div class="m-options" style="margin:20px 0">
+          <label class="m-option" th:each="s : ${services}" th:unless="${s.restricted}">
+            <input type="checkbox" name="serviceIds" th:value="${s.serviceId}" th:checked="${myServiceIds.contains(s.serviceId)}"/>
+            <span th:text="${s.serviceName}">Service</span>
+          </label>
+        </div>
+        <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Save</button>
+      </form>
+
+      <div th:if="${#lists.toList(services).?[restricted].size() > 0}" style="margin-top:32px">
+        <h3 class="m-h3" style="font-size:16px; margin-bottom:8px">Restricted services</h3>
+        <div class="m-options">
+          <label class="m-option m-locked" th:each="s : ${services}" th:if="${s.restricted}">
+            <input type="checkbox" disabled="disabled" th:checked="${myServiceIds.contains(s.serviceId)}"/>
+            <span th:text="${s.serviceName}">Service</span>
+            <span class="m-locked-note" th:if="${!myServiceIds.contains(s.serviceId)}">&mdash; contact admin to be assigned</span>
+          </label>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Services')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('services')}"></header>
+<main class="m-container m-section" data-filter-scope>
+  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
+    <span class="m-eyebrow">SERVICES &amp; PRICES · LKR</span>
+    <div class="m-row-between">
+      <h1 class="m-h1" style="white-space:nowrap">The menu</h1>
+      <div class="m-search-wrap">
+        <input type="search" class="m-search" data-search-input placeholder="Search services — e.g. keratin" aria-label="Search services" autocomplete="off"/>
+        <ul class="m-suggest" data-suggest hidden></ul>
+      </div>
+    </div>
+  </div>
+  <div class="m-chips" style="margin-bottom:40px" data-stagger>
+    <button type="button" class="m-chip is-active" data-filter="all" data-ripple aria-pressed="true">All</button>
+    <button type="button" class="m-chip" th:each="s : ${summaries}" th:data-filter="${s.category.categoryId}" data-ripple aria-pressed="false" th:text="${s.category.categoryName}">Category</button>
+  </div>
+  <div class="m-grid">
+    <a th:each="s : ${summaries}" th:href="@{/services/{id}(id=${s.category.categoryId})}" class="m-card"
+       data-item th:attr="data-cat=${s.category.categoryId}" th:data-title="${s.category.categoryName}"
+       th:data-names="${#strings.arrayJoin(s.serviceNames.toArray(), '|')}" data-stagger data-ripple>
+      <div class="m-ph m-ph--4x3"><span class="m-ph__label" th:text="${s.category.description}">photo</span></div>
+      <div class="m-card__body">
+        <span class="m-meta" th:text="(${s.category.categoryId <= 4} ? 'Face &amp; Body · ' : 'Hair · ') + ${s.serviceCount} + ' services'">Group · N services</span>
+        <h3 class="m-card__title" th:text="${s.category.categoryName}">Category</h3>
+        <span class="m-card__match" data-matches hidden></span>
+        <div class="m-card__footer">
+          <span class="m-card__price" th:text="'from Rs. ' + ${#numbers.formatDecimal(s.fromPrice, 1, 'COMMA', 0, 'POINT')}">from Rs. 0</span>
+          <span class="m-card__cta">VIEW →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="m-empty" data-empty hidden>
+    <span class="m-empty__title">Nothing matches "<span data-empty-q></span>"</span>
+    <button type="button" class="m-btn m-btn--outline" data-clear data-ripple>Clear search</button>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
