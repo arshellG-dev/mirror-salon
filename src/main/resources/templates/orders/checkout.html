@@ -3,11 +3,15 @@
 <head th:replace="~{fragments/layout :: head('Checkout')}"></head>
 <body>
 <header th:replace="~{fragments/layout :: header('shop')}"></header>
-<main class="m-container m-section" style="max-width:560px">
-  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
-    <span class="m-eyebrow">ALMOST THERE</span>
-    <h1 class="m-h1">Checkout</h1>
+<section class="m-band">
+  <div class="m-container m-band__inner" style="max-width:560px">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>ALMOST THERE</span>
+      <h1 data-lines>Checkout</h1>
+    </div>
   </div>
+</section>
+<main class="m-container m-main" style="max-width:560px">
   <div class="m-alert" th:if="${error}" th:text="${error}"></div>
 
   <h3 class="m-h3" style="font-size:20px">Delivery details</h3>
