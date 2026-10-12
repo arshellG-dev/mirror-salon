@@ -3,11 +3,15 @@
 <head th:replace="~{fragments/layout :: head('My Orders')}"></head>
 <body>
 <header th:replace="~{fragments/layout :: header('')}"></header>
-<main class="m-container m-section">
-  <div class="m-heading-block" style="margin-bottom:36px" data-stagger>
-    <span class="m-eyebrow">ORDER HISTORY</span>
-    <h1 class="m-h1">My orders</h1>
+<section class="m-band">
+  <div class="m-container m-band__inner">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>ORDER HISTORY</span>
+      <h1 data-lines>My <em class="m-accent">orders</em></h1>
+    </div>
   </div>
+</section>
+<main class="m-container m-main">
 
   <div class="m-price-card" th:each="o : ${orders}" style="margin-bottom:20px">
     <div class="m-price-card__head">
