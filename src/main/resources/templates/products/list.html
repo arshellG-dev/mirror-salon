@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Shop')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('shop')}"></header>
+<main class="m-container m-section" data-filter-scope>
+  <div class="m-heading-block" style="margin-bottom:32px" data-stagger>
+    <span class="m-eyebrow">TAKE THE SALON HOME</span>
+    <div class="m-row-between">
+      <h1 class="m-h1" style="white-space:nowrap">Hair care shop</h1>
+      <div class="m-search-wrap">
+        <input type="search" class="m-search" data-search-input placeholder="Search products — e.g. shampoo" aria-label="Search products" autocomplete="off"/>
+        <ul class="m-suggest" data-suggest hidden></ul>
+      </div>
+    </div>
+  </div>
+  <div class="m-chips" style="margin-bottom:40px" data-stagger>
+    <button type="button" class="m-chip is-active" data-filter="all" data-ripple aria-pressed="true">All</button>
+    <button type="button" class="m-chip" th:each="c : ${categories}" th:data-filter="${c.categoryName}" data-ripple aria-pressed="false" th:text="${c.categoryName}">Category</button>
+  </div>
+  <div class="m-grid" style="--min:240px">
+    <article class="m-card" th:each="p : ${products}" data-item th:attr="data-cat=${p.category.categoryName}" th:data-title="${p.productName}" data-stagger>
+      <div class="m-ph m-ph--1x1 m-ph--product"><span class="m-ph__label">product shot</span></div>
+      <div class="m-card__body" style="padding:20px 22px 22px; gap:6px">
+        <span class="m-meta" style="letter-spacing:.28em" th:text="${p.category.categoryName}">Category</span>
+        <h3 class="m-card__title m-card__title--sm" th:text="${p.productName}">Product</h3>
+        <span class="m-card__price" th:text="'Rs. ' + ${#numbers.formatDecimal(p.price, 1, 'COMMA', 0, 'POINT')}">Rs. 0</span>
+        <form th:action="@{/cart/add}" method="post" style="margin-top:12px">
+          <input type="hidden" name="productId" th:value="${p.productId}"/>
+          <input type="hidden" name="quantity" value="1"/>
+          <button type="submit" class="m-btn m-btn--primary m-btn--block" th:disabled="${p.stockQty == 0}" data-ripple
+                  th:text="${p.stockQty > 0} ? 'Add to bag' : 'Out of stock'">Add to bag</button>
+        </form>
+      </div>
+    </article>
+  </div>
+  <div class="m-empty" data-empty hidden>
+    <span class="m-empty__title">Nothing matches "<span data-empty-q></span>"</span>
+    <button type="button" class="m-btn m-btn--outline" data-clear data-ripple>Clear search</button>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

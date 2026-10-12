@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Products')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('products')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content">
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">Products</h1>
+        <a href="/admin/products/new" class="m-btn m-btn--primary m-btn--sm" data-ripple>Add product</a>
+      </div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+      <table class="m-table">
+        <thead><tr><th>Name</th><th>Brand</th><th>Category</th><th>Price</th><th>Stock</th><th>Active</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="p : ${products}" th:classappend="${p.stockQty <= 5} ? 'is-low-stock'">
+          <td th:text="${p.productName}">Name</td>
+          <td th:text="${p.brand}">Brand</td>
+          <td th:text="${p.category.categoryName}">Category</td>
+          <td th:text="'Rs. ' + ${#numbers.formatDecimal(p.price, 1, 'COMMA', 0, 'POINT')}">Rs. 0</td>
+          <td th:text="${p.stockQty}">0</td>
+          <td><span th:replace="~{fragments/internal-layout :: statusBadge(${p.active} ? 'ACTIVE' : 'INACTIVE')}"></span></td>
+          <td><a th:href="@{/admin/products/{id}/edit(id=${p.productId})}" class="m-btn m-btn--row m-btn--xs" data-ripple>Edit</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
