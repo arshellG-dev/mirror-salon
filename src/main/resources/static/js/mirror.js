@@ -1,15 +1,18 @@
-/* The Mirror — vanilla JS behaviours (no framework).
-   Adapted for server-rendered Thymeleaf pages: the booking wizard and the
-   "add to bag" localStorage demo from the original design handoff have been
-   removed since this app drives both through real server state (session
-   cart, real availability, real OTP). Everything else — ripple, stagger,
-   reveal-on-scroll, toast, filter/search and the reviews carousel — is
-   unchanged and still opt-in via data-* attributes. */
+/* The Mirror — vanilla JS behaviours (design v2, no framework).
+   Server-rendered Thymeleaf pages: the booking wizard and cart are driven by
+   real server state, so only presentation behaviour lives here. Everything
+   is opt-in via data-* attributes:
+     loader (first visit per session) · scroll progress bar · header state
+     [data-lines] headline line reveal · [data-stagger] · [data-reveal] (+ [data-img] clip reveal)
+     [data-hero-bg] / [data-parallax] · [data-kenburns] · [data-ripple]
+     [data-filter-scope] filter + search · [data-reviews] carousel
+     [data-menu] dashboard sidebar toggle · .m-header__toggle mobile nav       */
 (function () {
   'use strict';
-  var EASE = 'cubic-bezier(.2,.7,.2,1)';
+  var EASE = 'cubic-bezier(.2,.7,.2,1)', EASE_IO = 'cubic-bezier(.76,0,.24,1)';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function anim(el, frames, opts) { if (!reduce && el.animate) return el.animate(frames, opts); }
+  var html = document.documentElement;
+  function anim(el, frames, opts) { if (!reduce && el && el.animate) return el.animate(frames, opts); }
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
 
@@ -25,31 +28,102 @@
     s.addEventListener('animationend', function () { s.remove(); });
   });
 
-  /* 2. Page-entrance stagger — [data-stagger] elements fade/rise in sequence */
-  function stagger(els, step) {
+  /* 2. Loader — public pages, first visit of the session only */
+  var loader = $('.m-loader');
+  var base = 0;
+  if (loader && html.classList.contains('m-loading') && !reduce) {
+    base = 1700;
+    var logo = $('.m-loader__logo', loader), line = $('.m-loader__line', loader);
+    anim(logo, [{ opacity: 0, transform: 'translateY(16px) scale(.96)', filter: 'blur(8px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 1000, easing: EASE, fill: 'forwards' });
+    anim(line, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 1000, delay: 250, easing: EASE, fill: 'forwards' });
+    var out = anim(loader, [{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], { duration: 900, delay: 1400, easing: EASE_IO, fill: 'forwards' });
+    var done = function () { html.classList.remove('m-loading'); };
+    if (out) out.onfinish = done; else done();
+  } else {
+    html.classList.remove('m-loading');
+  }
+  try { if (loader) sessionStorage.setItem('mirror-loaded', '1'); } catch (e) { /* storage blocked: loader just replays */ }
+
+  /* 3. Headline lines — [data-lines] is split on <br> into overflow-hidden rows
+        that slide up (translateY 110% + skew → none, 1.1s, 120ms stagger) */
+  $$('[data-lines]').forEach(function (el) {
+    var parts = el.innerHTML.split(/<br\s*\/?>/i);
+    el.innerHTML = parts.map(function (p) { return '<span class="m-line"><span data-line>' + p + '</span></span>'; }).join('');
+  });
+  $$('[data-line]').forEach(function (el, i) {
+    anim(el, [{ transform: 'translateY(110%) skewY(4deg)' }, { transform: 'none' }], { duration: 1100, delay: base + i * 120, easing: EASE_IO, fill: 'backwards' });
+  });
+
+  /* 4. Entrance stagger — [data-stagger] elements fade/rise in sequence */
+  function stagger(els, step, delay) {
     els.forEach(function (el, i) {
-      anim(el, [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
-        { duration: 560, delay: Math.min(i, 12) * step, easing: EASE, fill: 'backwards' });
+      anim(el, [{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 700, delay: (delay || 0) + Math.min(i, 12) * step, easing: EASE, fill: 'backwards' });
     });
   }
-  stagger($$('[data-stagger]'), 70);
+  stagger($$('[data-stagger]'), 80, base + 200);
 
-  /* 3. Reveal on scroll — [data-reveal] below the fold fades up when 12% visible */
+  /* 5. Hero Ken Burns */
+  $$('[data-kenburns]').forEach(function (el) {
+    anim(el, [{ transform: 'scale(1.18)' }, { transform: 'scale(1.02)' }], { duration: 2800, delay: Math.max(0, base - 300), easing: EASE, fill: 'both' });
+  });
+
+  /* 6. Reveal on scroll — [data-reveal] fades up; [data-img] inside clips open */
+  function clipOpen(el) { anim(el, [{ clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0 0 0 0)' }], { duration: 1300, easing: EASE_IO }); }
   if ('IntersectionObserver' in window && !reduce) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
-        io.unobserve(en.target);
-        en.target.classList.remove('is-reveal-hidden');
-        anim(en.target, [{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'none' }], { duration: 800, easing: EASE });
+        var el = en.target;
+        io.unobserve(el);
+        el.classList.remove('is-reveal-hidden');
+        anim(el, [{ opacity: 0, transform: 'translateY(40px)' }, { opacity: 1, transform: 'none' }], { duration: 1000, easing: EASE });
+        $$('[data-img]', el).forEach(clipOpen);
+        if (el.hasAttribute('data-img')) clipOpen(el);
       });
     }, { threshold: 0.12 });
     $$('[data-reveal]').forEach(function (el) {
-      if (el.getBoundingClientRect().top > window.innerHeight) { el.classList.add('is-reveal-hidden'); io.observe(el); }
+      if (el.getBoundingClientRect().top > window.innerHeight * 0.92) { el.classList.add('is-reveal-hidden'); io.observe(el); }
     });
   }
 
-  /* 4. Toast — Mirror.toast('message') shows a pill for 2.4s. Also auto-shown
+  /* 7. Scroll effects — progress bar, header state, hero + element parallax */
+  var progress = $('.m-progress'), header = $('.m-header'), heroBg = $('[data-hero-bg]');
+  var parallaxEls = $$('[data-parallax]'), ticking = false;
+  function onScroll() {
+    ticking = false;
+    var y = window.scrollY, h = document.documentElement.scrollHeight - window.innerHeight;
+    if (progress) progress.style.transform = 'scaleX(' + (h > 0 ? y / h : 0) + ')';
+    if (header) header.classList.toggle('is-scrolled', y > 40);
+    if (reduce) return;
+    if (heroBg) heroBg.style.transform = 'translateY(' + (y * 0.3) + 'px)';
+    parallaxEls.forEach(function (el) {
+      var b = el.getBoundingClientRect();
+      var c = b.top + b.height / 2 - window.innerHeight / 2;
+      el.style.transform = 'translateY(' + (c * parseFloat(el.getAttribute('data-parallax'))) + 'px)';
+    });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  /* 8. Mobile nav (public header) and dashboard sidebar */
+  var toggle = $('.m-header__toggle');
+  if (toggle && header) {
+    toggle.addEventListener('click', function () {
+      var open = header.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+    $$('.m-nav a', header).forEach(function (a) { a.addEventListener('click', function () { header.classList.remove('is-open'); }); });
+  }
+  var shell = $('.m-shell');
+  if (shell) {
+    $$('[data-menu]').forEach(function (b) { b.addEventListener('click', function () { shell.classList.toggle('is-menu-open'); }); });
+    var scrim = $('.m-scrim', shell);
+    if (scrim) scrim.addEventListener('click', function () { shell.classList.remove('is-menu-open'); });
+  }
+
+  /* 9. Toast — Mirror.toast('message') shows a pill for 2.4s. Also auto-shown
      for any element carrying data-toast (e.g. a flash message from the server). */
   var toastTimer;
   function toast(msg) {
@@ -58,7 +132,7 @@
     el.innerHTML = '<span class="m-diamond"></span>';
     el.appendChild(document.createTextNode(msg));
     el.hidden = false;
-    anim(el, [{ opacity: 0, transform: 'translate(-50%, 20px) scale(.96)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 380, easing: EASE });
+    anim(el, [{ opacity: 0, transform: 'translate(-50%, 20px) scale(.96)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 400, easing: EASE });
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { el.hidden = true; }, 2400);
   }
@@ -67,7 +141,7 @@
     if (flash) toast(flash.getAttribute('data-toast'));
   });
 
-  /* 5. Filter + search — [data-filter-scope] containing chips [data-filter], items [data-item],
+  /* 10. Filter + search — [data-filter-scope] containing chips [data-filter], items [data-item],
         an optional search box [data-search-input] and its suggestion dropdown [data-suggest] */
   $$('[data-filter-scope]').forEach(function (scope) {
     var chips = $$('[data-filter]', scope), items = $$('[data-item]', scope);
@@ -115,7 +189,7 @@
       closeSuggestions();
       apply();
       entry.item.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
-      anim(entry.item, [{ boxShadow: '0 0 0 3px var(--c-gold)' }, { boxShadow: '0 0 0 0 rgba(0,0,0,0)' }], { duration: 900, easing: EASE });
+      anim(entry.item, [{ boxShadow: '0 0 0 3px #C6A16A' }, { boxShadow: '0 0 0 0 rgba(0,0,0,0)' }], { duration: 900, easing: EASE });
     }
 
     function renderSuggestions() {
@@ -169,7 +243,7 @@
     });
   });
 
-  /* 6. Reviews — [data-reviews] with list items [data-rev-index], prev/next buttons */
+  /* 11. Reviews — [data-reviews] with list items [data-rev-index], prev/next buttons */
   $$('[data-reviews]').forEach(function (scope) {
     var items = $$('[data-rev-index]', scope), feature = $('[data-rev-feature]', scope), idx = 0;
     if (!items.length || !feature) return;
@@ -180,7 +254,7 @@
       $('[data-rev-name]', feature).textContent = it.getAttribute('data-name');
       $('[data-rev-svc]', feature).textContent = it.getAttribute('data-svc');
       items.forEach(function (x, j) { x.classList.toggle('is-active', j === idx); });
-      anim(feature, [{ opacity: .2, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: EASE });
+      anim(feature, [{ opacity: 0, transform: 'translateY(16px)', filter: 'blur(4px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 560, easing: EASE });
     }
     items.forEach(function (it, i) { it.addEventListener('click', function () { show(i); }); });
     var prev = $('[data-rev-prev]', scope), next = $('[data-rev-next]', scope);

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Customer Database')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('customers')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" data-filter-scope>
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">Customer database</h1>
+        <a href="/admin/customers/past/new" class="m-btn m-btn--outline m-btn--sm" data-ripple>+ Add past customer</a>
+      </div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+      <form method="post" th:action="@{/admin/customers}" style="display:flex; gap:10px; align-items:end; flex-wrap:wrap; margin-bottom:20px">
+        <label class="m-field">Full name<input class="m-input" name="fullName" required="required"/></label>
+        <label class="m-field">Mobile number<input class="m-input" name="mobileNo" required="required"/></label>
+        <label class="m-field" style="flex:1; min-width:180px">Notes<input class="m-input" name="adminNotes"/></label>
+        <button type="submit" class="m-btn m-btn--primary" data-ripple>Add customer</button>
+      </form>
+
+      <input type="search" class="m-search" data-search-input placeholder="Search by name or mobile" aria-label="Search customers" autocomplete="off" style="margin-bottom:20px"/>
+
+      <table class="m-table">
+        <thead><tr><th>Name</th><th>Mobile</th><th>First visit</th><th>Completed visits</th><th>Months</th><th>Notes</th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${stats}" data-item th:data-title="${s.fullName} + ' ' + ${s.mobileNo}">
+          <td><a th:href="@{/admin/customers/{id}(id=${s.customerId})}" th:text="${s.fullName}">Name</a></td>
+          <td th:text="${s.mobileNo}">mobile</td>
+          <td th:text="${s.firstVisitDate} ?: 'Never visited'">date</td>
+          <td th:text="${s.totalVisits}">0</td>
+          <td th:text="${monthsAsCustomer.get(s.customerId)} ?: '-'">0</td>
+          <td th:text="${s.adminNotes}">notes</td>
+        </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

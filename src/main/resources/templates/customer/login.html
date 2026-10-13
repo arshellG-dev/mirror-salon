@@ -3,11 +3,15 @@
 <head th:replace="~{fragments/layout :: head('Login')}"></head>
 <body>
 <header th:replace="~{fragments/layout :: header('')}"></header>
-<main class="m-container m-section" style="max-width:440px">
-  <div class="m-heading-block" style="margin-bottom:28px" data-stagger>
-    <span class="m-eyebrow">CUSTOMER LOGIN</span>
-    <h1 class="m-h1" style="font-size:44px">Welcome back.</h1>
+<section class="m-band">
+  <div class="m-container m-band__inner" style="max-width:440px">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>CUSTOMER LOGIN</span>
+      <h1 data-lines>Welcome <em class="m-accent">back.</em></h1>
+    </div>
   </div>
+</section>
+<main class="m-container m-main" style="max-width:440px">
   <p class="m-body" style="font-size:14px">Enter your name and mobile number. <strong>Demo mode:</strong> your verification code will be shown on the next screen.</p>
   <div class="m-alert" th:if="${error}" th:text="${error}"></div>
   <form method="post" th:action="@{/login}" style="display:flex; flex-direction:column; gap:18px; margin-top:18px">

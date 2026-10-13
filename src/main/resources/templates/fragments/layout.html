@@ -6,55 +6,65 @@
     <title th:text="${title} + ' — The Mirror · Makeover Place'">The Mirror</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/mirror.css}"/>
+    <script>try{if(!sessionStorage.getItem('mirror-loaded'))document.documentElement.classList.add('m-loading')}catch(e){}</script>
 </head>
 <body>
 
-<header th:fragment="header(active)" class="m-header">
-  <div class="m-header__inner">
-    <a href="/" class="m-logo" data-ripple aria-label="The Mirror — home">
-      <span class="m-logo__word">MIRROR</span>
-      <span class="m-logo__sub">MAKEOVER PLACE</span>
-    </a>
-    <nav class="m-nav" aria-label="Main">
-      <a href="/" class="m-nav__link" th:classappend="${active == 'home'} ? 'is-active'" data-ripple>Home</a>
-      <a href="/services" class="m-nav__link" th:classappend="${active == 'services'} ? 'is-active'" data-ripple>Services</a>
-      <a href="/products" class="m-nav__link" th:classappend="${active == 'shop'} ? 'is-active'" data-ripple>Shop</a>
-      <a href="/visit" class="m-nav__link" th:classappend="${active == 'visit'} ? 'is-active'" data-ripple>Visit</a>
-      <a sec:authorize="hasRole('ADMIN')" href="/admin" class="m-nav__link" data-ripple>Staff</a>
-      <a sec:authorize="hasAnyRole('STYLIST','RECEPTIONIST')" href="/staff/dashboard" class="m-nav__link" data-ripple>Staff</a>
-      <a th:if="${session.loggedInCustomerId} != null" href="/bookings/my" class="m-nav__link" data-ripple>My Bookings</a>
-      <a th:if="${session.loggedInCustomerId} != null" href="/orders/my" class="m-nav__link" data-ripple>My Orders</a>
-      <a href="/cart" class="m-bag" data-ripple>Bag <span class="m-bag__count" th:text="${session.cartItems != null ? session.cartItems.size() : 0}">0</span></a>
-      <a th:if="${session.loggedInCustomerId} == null" href="/login" class="m-nav__link" data-ripple>Login</a>
-      <form th:if="${session.loggedInCustomerId} != null" th:action="@{/logout}" method="post" style="display:inline">
-        <button type="submit" class="m-nav__link" style="background:none;border:none;cursor:pointer" data-ripple>Logout</button>
-      </form>
-      <form sec:authorize="isAuthenticated()" th:action="@{/staff/logout}" method="post" style="display:inline">
-        <button type="submit" class="m-nav__link" style="background:none;border:none;cursor:pointer" data-ripple>Staff logout</button>
-      </form>
-      <a href="/booking/new" class="m-btn m-btn--primary" data-ripple>Book now</a>
-    </nav>
+<!-- Public header. A fragment of several elements: first-visit loader, scroll-progress bar, then the
+     fixed header. On the home page it starts transparent over the hero (.is-over-hero) and turns
+     ink + blur once the page scrolls (mirror.js adds .is-scrolled). -->
+<th:block th:fragment="header(active)">
+  <div class="m-loader" aria-hidden="true">
+    <img class="m-loader__logo" th:src="@{/img/logo-gold.png}" alt=""/>
+    <span class="m-loader__line"></span>
   </div>
-</header>
+  <div class="m-progress" aria-hidden="true"></div>
+  <header class="m-header" th:classappend="${active == 'home'} ? 'is-over-hero'">
+    <div class="m-header__inner">
+      <a href="/" class="m-logo" aria-label="The Mirror — Makeover Place — home">
+        <img th:src="@{/img/logo-gold.png}" alt="The Mirror — Makeover Place"/>
+      </a>
+      <button type="button" class="m-header__toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <nav class="m-nav" aria-label="Main">
+        <a href="/" class="m-nav__link" th:classappend="${active == 'home'} ? 'is-active'">Home</a>
+        <a href="/services" class="m-nav__link" th:classappend="${active == 'services'} ? 'is-active'">Services</a>
+        <a href="/products" class="m-nav__link" th:classappend="${active == 'shop'} ? 'is-active'">Shop</a>
+        <a href="/visit" class="m-nav__link" th:classappend="${active == 'visit'} ? 'is-active'">Visit</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/admin" class="m-nav__link">Staff</a>
+        <a sec:authorize="hasAnyRole('STYLIST','RECEPTIONIST')" href="/staff/dashboard" class="m-nav__link">Staff</a>
+        <a th:if="${session.loggedInCustomerId} != null" href="/bookings/my" class="m-nav__link">My Bookings</a>
+        <a th:if="${session.loggedInCustomerId} != null" href="/orders/my" class="m-nav__link">My Orders</a>
+        <a th:if="${session.loggedInCustomerId} == null" href="/login" class="m-nav__link">Login</a>
+        <form th:if="${session.loggedInCustomerId} != null" th:action="@{/logout}" method="post">
+          <button type="submit" class="m-nav__link">Logout</button>
+        </form>
+        <form sec:authorize="isAuthenticated()" th:action="@{/staff/logout}" method="post">
+          <button type="submit" class="m-nav__link">Staff logout</button>
+        </form>
+        <a href="/cart" class="m-bag" data-ripple>Bag <span class="m-bag__count" th:text="${session.cartItems != null ? session.cartItems.size() : 0}">0</span></a>
+        <a href="/booking/new" class="m-btn m-btn--primary" data-ripple>Book now</a>
+      </nav>
+    </div>
+  </header>
+</th:block>
 
 <footer th:fragment="footer" class="m-footer">
   <div class="m-footer__grid">
-    <div class="m-stack" style="gap:6px">
-      <span class="m-footer__logo">MIRROR</span>
-      <span class="m-footer__sub">MAKEOVER PLACE</span>
+    <div class="m-stack" style="gap:20px">
+      <img class="m-footer__logo" th:src="@{/img/logo-gold.png}" alt="The Mirror — Makeover Place"/>
     </div>
-    <div class="m-stack" style="gap:10px">
+    <div class="m-stack" style="gap:12px">
       <span class="m-footer__label">VISIT</span>
       <span class="m-footer__text">51, Hotel Road<br/>Mount Lavinia</span>
     </div>
-    <div class="m-stack" style="gap:10px">
+    <div class="m-stack" style="gap:12px">
       <span class="m-footer__label">CALL</span>
       <a href="tel:0776682015">0776-682-015</a>
       <a href="tel:0117162227">0117-162-227</a>
     </div>
-    <nav class="m-stack m-footer__nav" style="gap:6px; align-items:flex-start" aria-label="Footer">
+    <nav class="m-stack m-footer__nav" style="gap:8px; align-items:flex-start" aria-label="Footer">
       <span class="m-footer__label" style="margin-bottom:4px">EXPLORE</span>
       <a href="/">Home</a>
       <a href="/services">Services</a>
@@ -62,7 +72,7 @@
       <a href="/visit">Visit</a>
     </nav>
   </div>
-  <div class="m-footer__legal">© The Mirror — Makeover Place. Prices in LKR.</div>
+  <div class="m-footer__legal">© The Mirror — Makeover Place · Prices in LKR</div>
   <script th:src="@{/js/mirror.js}"></script>
 </footer>
 

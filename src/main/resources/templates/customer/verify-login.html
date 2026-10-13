@@ -3,11 +3,15 @@
 <head th:replace="~{fragments/layout :: head('Verify Code')}"></head>
 <body>
 <header th:replace="~{fragments/layout :: header('')}"></header>
-<main class="m-container m-section" style="max-width:440px">
-  <div class="m-heading-block" style="margin-bottom:28px" data-stagger>
-    <span class="m-eyebrow">VERIFY</span>
-    <h1 class="m-h1" style="font-size:44px">Enter your code.</h1>
+<section class="m-band">
+  <div class="m-container m-band__inner" style="max-width:440px">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>VERIFY</span>
+      <h1 data-lines>Enter your <em class="m-accent">code.</em></h1>
+    </div>
   </div>
+</section>
+<main class="m-container m-main" style="max-width:440px">
   <p class="m-body" style="font-size:14px">A code was sent to <strong th:text="${mobileNo}">mobile</strong>.</p>
   <div th:if="${demoOtp}" class="m-alert" style="background:rgba(176,141,87,.15); color:var(--c-heading); font-size:14px">
     <strong>Demo mode — your code:</strong> <span style="font-size:20px; letter-spacing:.1em" th:text="${demoOtp}">000000</span>

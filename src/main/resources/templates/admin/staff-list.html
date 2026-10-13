@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Staff Management')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('staff')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" data-filter-scope>
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:36px">Staff</h1>
+        <a href="/admin/staff/new" class="m-btn m-btn--primary m-btn--sm" data-ripple>Add staff</a>
+      </div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+      <div class="m-chips" style="margin-bottom:20px">
+        <button type="button" class="m-chip is-active" data-filter="all" data-ripple aria-pressed="true">All</button>
+        <button type="button" class="m-chip" data-filter="ADMIN" data-ripple aria-pressed="false">Admin</button>
+        <button type="button" class="m-chip" data-filter="STYLIST" data-ripple aria-pressed="false">Stylist</button>
+        <button type="button" class="m-chip" data-filter="RECEPTIONIST" data-ripple aria-pressed="false">Receptionist</button>
+      </div>
+
+      <table class="m-table">
+        <thead><tr><th>Name</th><th>Username</th><th>Type</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${staffList}" data-item th:attr="data-cat=${s.staffType}" th:data-title="${s.firstName} + ' ' + ${s.lastName}">
+          <td><a th:if="${s.staffType.name() == 'STYLIST'}" th:href="@{/admin/staff/{id}(id=${s.staffId})}" th:text="${s.firstName} + ' ' + ${s.lastName}">Name</a>
+              <span th:unless="${s.staffType.name() == 'STYLIST'}" th:text="${s.firstName} + ' ' + ${s.lastName}">Name</span></td>
+          <td th:text="${s.username}">username</td>
+          <td th:text="${s.staffType}">TYPE</td>
+          <td><span th:replace="~{fragments/internal-layout :: statusBadge(${s.active} ? 'ACTIVE' : 'INACTIVE')}"></span></td>
+          <td>
+            <form th:action="@{/admin/staff/{id}/deactivate(id=${s.staffId})}" method="post" th:if="${s.active}" style="display:inline">
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Deactivate</button>
+            </form>
+            <form th:action="@{/admin/staff/{id}/activate(id=${s.staffId})}" method="post" th:unless="${s.active}" style="display:inline">
+              <button type="submit" class="m-btn m-btn--row m-btn--xs" data-ripple>Activate</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

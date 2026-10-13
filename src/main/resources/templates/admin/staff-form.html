@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Add Staff')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('staff')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:520px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:24px" data-stagger>Add staff</h1>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+      <form method="post" th:action="@{/admin/staff}" style="display:flex; flex-direction:column; gap:16px">
+        <div style="display:flex; gap:10px">
+          <label class="m-field" style="flex:1">First name<input class="m-input" name="firstName" required="required"/></label>
+          <label class="m-field" style="flex:1">Last name<input class="m-input" name="lastName" required="required"/></label>
+        </div>
+        <label class="m-field">Mobile number (optional)<input class="m-input" name="mobileNo"/></label>
+        <label class="m-field">Username<input class="m-input" name="username" required="required"/></label>
+        <label class="m-field">Password<input type="password" class="m-input" name="password" id="new-staff-password" required="required"/>
+          <button type="button" class="m-btn m-btn--row m-btn--xs" style="margin-top:6px" data-ripple onclick="document.getElementById('new-staff-password').value = Math.random().toString(36).slice(2,10)">Generate</button>
+        </label>
+        <label class="m-field">Staff type
+          <select class="m-input" name="staffType">
+            <option th:each="t : ${staffTypes}" th:value="${t}" th:text="${t}">TYPE</option>
+          </select>
+        </label>
+        <label class="m-field">Specialty title (stylists only)<input class="m-input" name="specialtyTitle"/></label>
+        <label class="m-field">Bio (stylists only)<textarea class="m-input" name="bio" rows="3"></textarea></label>
+        <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Add staff</button>
+      </form>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>

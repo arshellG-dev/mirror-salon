@@ -24,11 +24,10 @@ public class HomeController {
         model.addAttribute("faceBody", summaries.subList(0, 4));
         model.addAttribute("hair", summaries.subList(4, 9));
 
+        List<String> signatureNames = List.of("Layer Cut", "Hair Ironing", "Keratin Treatment");
         model.addAttribute("signature", salonServiceRepository.findAllWithCategory().stream()
-                .filter(s -> List.of("Illuminating Facial", "Keratin Treatment", "Highlights").contains(s.getServiceName()))
-                .sorted((a, b) -> Integer.compare(
-                        List.of("Illuminating Facial", "Keratin Treatment", "Highlights").indexOf(a.getServiceName()),
-                        List.of("Illuminating Facial", "Keratin Treatment", "Highlights").indexOf(b.getServiceName())))
+                .filter(s -> signatureNames.contains(s.getServiceName()))
+                .sorted((a, b) -> Integer.compare(signatureNames.indexOf(a.getServiceName()), signatureNames.indexOf(b.getServiceName())))
                 .toList());
 
         salonServiceRepository.findAllWithCategory().stream()

@@ -5,9 +5,8 @@
 <!-- Sidebar: renders a different nav set per role. "Don't show admin menu items
      greyed out to a stylist — simply don't render them" (spec §5). -->
 <aside th:fragment="sidebar(active)" class="m-sidebar">
-  <a href="/" class="m-sidebar__brand" style="display:block">
-    <span class="m-logo__word" style="display:block; font-family:var(--f-serif); font-size:20px; letter-spacing:.18em">MIRROR</span>
-    <span class="m-logo__sub" style="display:block; font-size:10px; letter-spacing:.3em; margin-top:2px">MAKEOVER PLACE</span>
+  <a href="/" class="m-sidebar__brand" aria-label="The Mirror — Makeover Place — public site">
+    <img th:src="@{/img/logo-gold.png}" alt="The Mirror — Makeover Place"/>
     <span class="m-sidebar__role" th:text="${currentStaffRole}">ROLE</span>
   </a>
 
@@ -45,6 +44,8 @@
 
 <!-- Top bar: staff name, role badge, logout. Shared by every internal page. -->
 <header th:fragment="topbar" class="m-topbar">
+  <button type="button" class="m-topbar__menu" data-menu aria-label="Open menu"><span></span><span></span><span></span></button>
+  <div class="m-scrim" aria-hidden="true"></div>
   <div class="m-topbar__user">
     <span class="m-topbar__name" th:text="${currentStaffName}">Name</span>
     <span class="m-role-badge" th:text="${currentStaffRole}">ROLE</span>

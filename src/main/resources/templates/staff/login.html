@@ -3,11 +3,15 @@
 <head th:replace="~{fragments/layout :: head('Staff Login')}"></head>
 <body>
 <header th:replace="~{fragments/layout :: header('')}"></header>
-<main class="m-container m-section" style="max-width:420px">
-  <div class="m-heading-block" style="margin-bottom:28px" data-stagger>
-    <span class="m-eyebrow">STAFF &amp; ADMIN</span>
-    <h1 class="m-h1" style="font-size:44px">Staff login</h1>
+<section class="m-band">
+  <div class="m-container m-band__inner" style="max-width:420px">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>STAFF &amp; ADMIN</span>
+      <h1 data-lines>Staff <em class="m-accent">login</em></h1>
+    </div>
   </div>
+</section>
+<main class="m-container m-main" style="max-width:420px">
   <div class="m-alert" th:if="${error}" th:text="${error}"></div>
   <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
   <form method="post" th:action="@{/staff/login}" style="display:flex; flex-direction:column; gap:18px">
