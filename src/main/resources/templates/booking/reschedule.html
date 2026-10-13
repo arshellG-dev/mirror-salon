@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reschedule')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<section class="m-band">
+  <div class="m-container m-band__inner">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>CHANGE YOUR TIME</span>
+      <h1 data-lines>Reschedule <em class="m-accent">booking</em></h1>
+    </div>
+  </div>
+</section>
+<main class="m-container m-main">
+  <p class="m-body">Current: <strong th:text="${booking.bookingDate} + ' at ' + ${booking.startTime}">date</strong>
+    with <strong th:text="${booking.stylist.staff.firstName} + ' ' + ${booking.stylist.staff.lastName}">Stylist</strong></p>
+
+  <form method="get" th:action="@{/bookings/{id}/reschedule(id=${booking.bookingId})}" style="margin:20px 0">
+    <div class="m-dates">
+      <label class="m-date" th:each="i : ${#numbers.sequence(0, 13)}">
+        <input type="radio" name="date" th:value="${today.plusDays(i)}" th:checked="${selectedDate} == ${today.plusDays(i).toString()}" onchange="this.form.requestSubmit()"/>
+        <span class="m-date__dow" th:text="${i == 0} ? 'TODAY' : ${#strings.toUpperCase(today.plusDays(i).getDayOfWeek().toString().substring(0,3))}">DOW</span>
+        <span class="m-date__day" th:text="${today.plusDays(i).getDayOfMonth()}">1</span>
+        <span class="m-date__mon" th:text="${#strings.toUpperCase(today.plusDays(i).getMonth().toString().substring(0,3))}">MON</span>
+      </label>
+    </div>
+  </form>
+
+  <div th:if="${selectedDate} != null">
+    <div class="m-alert" th:if="${isHoliday}">The salon is closed on this date.</div>
+    <div th:unless="${isHoliday}">
+      <p class="m-body" th:if="${slots.isEmpty()}">No free slots on this date. Try another day.</p>
+      <form method="post" th:action="@{/bookings/{id}/reschedule(id=${booking.bookingId})}" th:if="!${slots.isEmpty()}">
+        <input type="hidden" name="date" th:value="${selectedDate}"/>
+        <div class="m-slots" style="margin-bottom:20px">
+          <label class="m-slot" th:each="slot : ${slots}">
+            <input type="radio" name="startTime" th:value="${slot}" required="required"/>
+            <span th:text="${slot}">09:00</span>
+          </label>
+        </div>
+        <button type="submit" class="m-btn m-btn--primary" data-ripple>Confirm new time</button>
+      </form>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

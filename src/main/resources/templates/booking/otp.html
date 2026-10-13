@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Book')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<section class="m-band">
+  <div class="m-container m-band__inner">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>RESERVE YOUR CHAIR</span>
+      <h1 data-lines>Book an <em class="m-accent">appointment</em></h1>
+    </div>
+  </div>
+</section>
+<main class="m-container m-main">
+  <div th:replace="~{booking/fragments/stepper :: stepper(${step})}"></div>
+
+  <div class="m-booking">
+    <div class="m-booking__main" style="max-width:440px">
+      <h3 class="m-h3">Confirm booking code</h3>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+      <div th:if="${demoOtp}" class="m-alert" style="background:rgba(176,141,87,.15); color:var(--c-heading); font-size:14px">
+        <strong>Demo mode — your code:</strong> <span style="font-size:20px; letter-spacing:.1em" th:text="${demoOtp}">000000</span>
+      </div>
+      <form method="post" th:action="@{/booking/otp}" style="display:flex; flex-direction:column; gap:18px">
+        <label class="m-field">6-digit code<input class="m-input" name="code" maxlength="6" pattern="[0-9]{6}" required="required" autofocus="autofocus"/></label>
+        <button type="submit" class="m-btn m-btn--primary" style="padding:16px 28px; letter-spacing:.2em" data-ripple>Confirm booking</button>
+      </form>
+      <form method="post" th:action="@{/booking/otp/resend}" style="margin-top:10px">
+        <button type="submit" class="m-link-btn" data-ripple>Resend code</button>
+      </form>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
