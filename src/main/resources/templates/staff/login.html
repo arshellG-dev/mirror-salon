@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Staff Login')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<section class="m-band">
+  <div class="m-container m-band__inner" style="max-width:420px">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>STAFF &amp; ADMIN</span>
+      <h1 data-lines>Staff <em class="m-accent">login</em></h1>
+    </div>
+  </div>
+</section>
+<main class="m-container m-main" style="max-width:420px">
+  <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+  <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+  <form method="post" th:action="@{/staff/login}" style="display:flex; flex-direction:column; gap:18px">
+    <label class="m-field">Username<input type="text" class="m-input" name="username" required="required" autofocus="autofocus"/></label>
+    <label class="m-field">Password<input type="password" class="m-input" name="password" required="required"/></label>
+    <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Login</button>
+  </form>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

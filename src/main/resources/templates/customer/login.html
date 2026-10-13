@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<section class="m-band">
+  <div class="m-container m-band__inner" style="max-width:440px">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>CUSTOMER LOGIN</span>
+      <h1 data-lines>Welcome <em class="m-accent">back.</em></h1>
+    </div>
+  </div>
+</section>
+<main class="m-container m-main" style="max-width:440px">
+  <p class="m-body" style="font-size:14px">Enter your name and mobile number. <strong>Demo mode:</strong> your verification code will be shown on the next screen.</p>
+  <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+  <form method="post" th:action="@{/login}" style="display:flex; flex-direction:column; gap:18px; margin-top:18px">
+    <label class="m-field">Full name<input class="m-input" name="fullName" th:value="${fullName}" required="required"/></label>
+    <label class="m-field">Mobile number<input class="m-input" name="mobileNo" th:value="${mobileNo}" placeholder="07X XXX XXXX" pattern="0[0-9]{9}" required="required"/></label>
+    <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Send verification code</button>
+  </form>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
