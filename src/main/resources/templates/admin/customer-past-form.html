@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Add Past Customer')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('customers')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:640px">
+      <h1 class="m-h1" style="font-size:32px; margin-bottom:8px" data-stagger>Add past customer</h1>
+      <p class="m-body" style="font-size:13px; margin-bottom:24px">For a pre-website regular &mdash; backfill their name and any real past visits you remember, all in one go.</p>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+      <form method="post" th:action="@{/admin/customers/past}" style="display:flex; flex-direction:column; gap:16px">
+        <div style="display:flex; gap:10px">
+          <label class="m-field" style="flex:1">Full name<input class="m-input" name="fullName" required="required"/></label>
+          <label class="m-field" style="flex:1">Mobile number<input class="m-input" name="mobileNo" required="required"/></label>
+        </div>
+        <label class="m-field">Notes (optional)<input class="m-input" name="adminNotes"/></label>
+
+        <h3 class="m-h3" style="font-size:18px; margin:10px 0 0">Past visits (optional)</h3>
+        <div th:each="row : ${rows}" th:id="'visit-row-' + ${row}" th:style="${row > 1} ? 'display:none' : ''"
+             style="border:1px solid var(--c-line); border-radius:var(--r-md); padding:16px; display:flex; flex-direction:column; gap:10px">
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <label class="m-field" style="flex:1; min-width:160px">Date<input type="date" class="m-input" th:name="'visitDate' + ${row}"/></label>
+            <label class="m-field" style="flex:1; min-width:180px">Stylist
+              <select class="m-input" th:name="'visitStylist' + ${row}">
+                <option value="">Select&hellip;</option>
+                <option th:each="st : ${stylists}" th:value="${st.staffId}" th:text="${st.staff.fullName}">Stylist</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <span class="m-locked-note">Service(s) performed</span>
+            <div class="m-chips" style="margin-top:6px">
+              <label class="m-chip" th:each="s : ${services}" style="cursor:pointer">
+                <input type="checkbox" th:name="'visitServices' + ${row}" th:value="${s.serviceId}" style="margin-right:6px"/><span th:text="${s.serviceName}">Service</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="m-btn m-btn--outline m-btn--sm" style="align-self:flex-start" data-ripple
+                onclick="revealNextRow()">+ Add another visit</button>
+
+        <button type="submit" class="m-btn m-btn--primary m-btn--block" data-ripple>Save customer</button>
+      </form>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+<script th:inline="javascript">
+  var maxRows = /*[[${#lists.size(rows)}]]*/ 6;
+  var nextRow = 2;
+  function revealNextRow() {
+    if (nextRow > maxRows) return;
+    var el = document.getElementById('visit-row-' + nextRow);
+    if (el) el.style.display = '';
+    nextRow++;
+  }
+</script>
+</body>
+</html>

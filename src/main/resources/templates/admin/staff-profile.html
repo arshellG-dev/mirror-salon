@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Stylist Profile')}"></head>
+<body class="m-internal">
+<div class="m-shell">
+  <aside th:replace="~{fragments/internal-layout :: sidebar('staff')}"></aside>
+  <div class="m-shell__body">
+    <header th:replace="~{fragments/internal-layout :: topbar}"></header>
+    <main class="m-shell__content" style="max-width:760px">
+      <div class="m-page-head" data-stagger>
+        <h1 class="m-h1" style="font-size:32px" th:text="${stylist.staff.fullName}">Stylist</h1>
+        <a href="/admin/staff" class="m-btn m-btn--outline m-btn--sm" data-ripple>&larr; All staff</a>
+      </div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+      <h3 class="m-h3" style="font-size:18px; margin-bottom:10px">Profile</h3>
+      <form method="post" th:action="@{/admin/staff/{id}/profile(id=${stylist.staffId})}" enctype="multipart/form-data"
+            style="display:flex; flex-direction:column; gap:14px; margin-bottom:32px">
+        <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap">
+          <img th:if="${stylist.photoUrl != null}" th:src="${stylist.photoUrl}" alt="Photo"
+               style="width:96px; height:96px; object-fit:cover; border-radius:var(--r-md)"/>
+          <div style="flex:1; min-width:200px; display:flex; flex-direction:column; gap:14px">
+            <label class="m-field">Specialty title<input class="m-input" name="specialtyTitle" th:value="${stylist.specialtyTitle}"/></label>
+            <label class="m-field">Photo<input type="file" name="photo" class="m-input" accept="image/*"/></label>
+          </div>
+        </div>
+        <label class="m-field">Bio<textarea class="m-input" name="bio" rows="3" th:text="${stylist.bio}"></textarea></label>
+        <button type="submit" class="m-btn m-btn--primary m-btn--sm" style="align-self:flex-start" data-ripple>Save profile</button>
+      </form>
+
+      <h3 class="m-h3" style="font-size:18px; margin-bottom:10px">Working hours</h3>
+      <p class="m-body" style="font-size:13px">Base weekly schedule &mdash; leave a day blank to mark it as off. This is what the booking calendar uses to offer time slots.</p>
+      <form method="post" th:action="@{/admin/staff/{id}/working-hours(id=${stylist.staffId})}" style="margin:16px 0 32px">
+        <div class="m-hours-grid">
+          <div class="m-hours-grid__day" th:each="day : ${#numbers.sequence(1,7)}">
+            <span class="m-hours-grid__day-label" th:text="${dayNames[day]}">Day</span>
+            <input type="time" class="m-input" style="margin-bottom:6px; font-size:12px; padding:8px"
+                   th:name="'start' + ${day}" th:value="${hoursByDay.get(day)} != null ? ${hoursByDay.get(day).startTime} : ''"/>
+            <input type="time" class="m-input" style="font-size:12px; padding:8px"
+                   th:name="'end' + ${day}" th:value="${hoursByDay.get(day)} != null ? ${hoursByDay.get(day).endTime} : ''"/>
+          </div>
+        </div>
+        <button type="submit" class="m-btn m-btn--primary m-btn--sm" data-ripple>Save working hours</button>
+      </form>
+
+      <h3 class="m-h3" style="font-size:18px; margin-bottom:10px">Services performed</h3>
+      <p class="m-body" style="font-size:13px; margin-bottom:12px">
+        Managed from each service's edit page. <a href="/admin/services">Go to Services &rarr;</a>
+      </p>
+      <div class="m-chips">
+        <span th:each="s : ${services}" th:if="${assignedServiceIds.contains(s.serviceId)}" class="m-chip is-active" th:text="${s.serviceName}">Service</span>
+      </div>
+    </main>
+  </div>
+</div>
+<script th:replace="~{fragments/internal-layout :: scripts}"></script>
+</body>
+</html>
