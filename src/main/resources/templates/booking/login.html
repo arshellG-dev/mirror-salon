@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Book')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<section class="m-band">
+  <div class="m-container m-band__inner">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>RESERVE YOUR CHAIR</span>
+      <h1 data-lines>Book an <em class="m-accent">appointment</em></h1>
+    </div>
+  </div>
+</section>
+<main class="m-container m-main">
+  <div th:replace="~{booking/fragments/stepper :: stepper(${step})}"></div>
+
+  <div class="m-booking">
+    <div class="m-booking__main" style="max-width:440px">
+      <h3 class="m-h3">Confirm it's you</h3>
+      <p class="m-body" style="font-size:14px; opacity:.8">We'll text a one-time code to confirm your mobile number. <strong>Demo mode:</strong> the code is shown right here.</p>
+      <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+      <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+
+      <div th:if="${demoOtp}" class="m-alert" style="background:rgba(176,141,87,.15); color:var(--c-heading); font-size:14px">
+        <strong>Your code:</strong> <span style="font-size:20px; letter-spacing:.1em" th:text="${demoOtp}">000000</span>
+      </div>
+
+      <form th:if="${showCodeField} == null" method="post" th:action="@{/booking/login}" style="display:flex; flex-direction:column; gap:18px">
+        <label class="m-field">Full name<input class="m-input" name="fullName" placeholder="Your name" autocomplete="name" required="required"/></label>
+        <label class="m-field">Mobile number<input class="m-input" name="mobileNo" placeholder="07X XXX XXXX" pattern="0[0-9]{9}" inputmode="tel" autocomplete="tel" required="required"/></label>
+        <div class="m-booking__actions">
+          <a href="/booking/datetime" class="m-link-btn" style="font-size:11.5px; letter-spacing:.22em; padding:12px 8px" data-ripple>← Back</a>
+          <button type="submit" class="m-btn m-btn--primary" style="padding:16px 28px; letter-spacing:.2em" data-ripple>Send code →</button>
+        </div>
+      </form>
+
+      <div th:if="${showCodeField} != null">
+        <p class="m-body" style="font-size:14px">Code sent to <strong th:text="${mobileNo}">mobile</strong>.</p>
+        <form method="post" th:action="@{/booking/login/verify}" style="display:flex; flex-direction:column; gap:18px">
+          <label class="m-field">6-digit code<input class="m-input" name="code" maxlength="6" pattern="[0-9]{6}" required="required" autofocus="autofocus"/></label>
+          <div class="m-booking__actions">
+            <button type="submit" class="m-btn m-btn--primary" style="padding:16px 28px; letter-spacing:.2em" data-ripple>Verify &amp; continue →</button>
+          </div>
+        </form>
+        <form method="post" th:action="@{/booking/login/resend}" style="margin-top:10px">
+          <button type="submit" class="m-link-btn" data-ripple>Resend code</button>
+        </form>
+      </div>
+    </div>
+    <aside class="m-summary">
+      <span class="m-eyebrow" style="letter-spacing:.32em">YOUR BOOKING</span>
+      <div class="m-summary__block"><span class="m-summary__label">WHERE</span><span style="font-size:15px; line-height:1.5">51, Hotel Road, Mount Lavinia</span></div>
+    </aside>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

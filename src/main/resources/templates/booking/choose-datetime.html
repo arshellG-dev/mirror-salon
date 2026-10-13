@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Book')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<section class="m-band">
+  <div class="m-container m-band__inner">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>RESERVE YOUR CHAIR</span>
+      <h1 data-lines>Book an <em class="m-accent">appointment</em></h1>
+    </div>
+  </div>
+</section>
+<main class="m-container m-main">
+  <div th:replace="~{booking/fragments/stepper :: stepper(${step})}"></div>
+
+  <div class="m-booking">
+    <div class="m-booking__main">
+      <h3 class="m-h3">Pick a day &amp; time</h3>
+      <p class="m-body" style="font-size:14px; opacity:.8">Total duration: <strong th:text="${totalDuration} + ' mins'">60 mins</strong></p>
+
+      <form method="get" th:action="@{/booking/datetime}" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+        <div class="m-dates">
+          <label class="m-date" th:each="i : ${#numbers.sequence(0, 13)}">
+            <input type="radio" name="date" th:value="${today.plusDays(i)}" th:checked="${selectedDate} == ${today.plusDays(i).toString()}" onchange="this.form.requestSubmit()"/>
+            <span class="m-date__dow" th:text="${i == 0} ? 'TODAY' : ${#strings.toUpperCase(today.plusDays(i).getDayOfWeek().toString().substring(0,3))}">DOW</span>
+            <span class="m-date__day" th:text="${today.plusDays(i).getDayOfMonth()}">1</span>
+            <span class="m-date__mon" th:text="${#strings.toUpperCase(today.plusDays(i).getMonth().toString().substring(0,3))}">MON</span>
+          </label>
+        </div>
+        <noscript><button type="submit" class="m-btn m-btn--outline m-btn--sm">Check availability</button></noscript>
+      </form>
+
+      <div th:if="${selectedDate} != null">
+        <div class="m-alert" th:if="${isHoliday}">The salon is closed on this date.</div>
+        <div th:unless="${isHoliday}">
+          <p class="m-body" style="font-size:14px" th:if="${slots.isEmpty()}">No free slots on this date. Try another day.</p>
+          <form method="post" th:action="@{/booking/datetime}" th:if="!${slots.isEmpty()}">
+            <input type="hidden" name="date" th:value="${selectedDate}"/>
+            <div class="m-slots">
+              <label class="m-slot" th:each="slot : ${slots}">
+                <input type="radio" name="startTime" th:value="${slot}" required="required"/>
+                <span th:text="${slot}">09:00</span>
+              </label>
+            </div>
+            <div class="m-booking__actions">
+              <a href="/booking/stylist" class="m-link-btn" style="font-size:11.5px; letter-spacing:.22em; padding:12px 8px" data-ripple>← Back</a>
+              <button type="submit" class="m-btn m-btn--primary" style="padding:16px 28px; letter-spacing:.2em" data-ripple>Continue →</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <aside class="m-summary">
+      <span class="m-eyebrow" style="letter-spacing:.32em">YOUR BOOKING</span>
+      <div class="m-summary__block"><span class="m-summary__label">WHERE</span><span style="font-size:15px; line-height:1.5">51, Hotel Road, Mount Lavinia</span></div>
+    </aside>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

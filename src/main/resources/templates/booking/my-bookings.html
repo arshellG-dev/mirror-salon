@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Bookings')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<section class="m-band">
+  <div class="m-container m-band__inner">
+    <div class="m-heading-block">
+      <span class="m-eyebrow m-eyebrow--rule" data-stagger>YOUR APPOINTMENTS</span>
+      <h1 data-lines>My <em class="m-accent">bookings</em></h1>
+    </div>
+  </div>
+</section>
+<main class="m-container m-main">
+  <div class="m-alert" style="background:rgba(176,141,87,.12); color:var(--c-heading)" th:if="${message}" th:text="${message}"></div>
+  <div class="m-alert" th:if="${error}" th:text="${error}"></div>
+
+  <div class="m-price-card" th:each="b : ${bookings}" style="margin-bottom:20px">
+    <div class="m-price-card__head">
+      <span class="m-price-card__title" style="text-transform:none; letter-spacing:normal; font-family:var(--f-serif); font-size:22px; color:var(--c-heading)">
+        <span th:each="bs, iter : ${b.services}"><span th:text="${bs.service.serviceName}">Service</span><span th:unless="${iter.last}">, </span></span>
+      </span>
+      <span class="m-meta" th:text="${b.status}">STATUS</span>
+    </div>
+    <div class="m-price-row" style="border-bottom:none">
+      <div style="min-width:0">
+        <span class="m-price-row__name" th:text="${b.bookingDate} + ' at ' + ${b.startTime} + ' with ' + ${b.stylist.staff.firstName} + ' ' + ${b.stylist.staff.lastName}">when</span>
+      </div>
+      <div style="display:flex; gap:8px" th:if="${b.status.name() == 'PENDING_OTP' or b.status.name() == 'CONFIRMED'}">
+        <a th:href="@{/bookings/{id}/reschedule(id=${b.bookingId})}" class="m-btn m-btn--row" data-ripple>Reschedule</a>
+        <form th:action="@{/bookings/{id}/cancel(id=${b.bookingId})}" method="post" onsubmit="return confirm('Cancel this booking?');">
+          <button type="submit" class="m-btn m-btn--row" data-ripple>Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <p class="m-body" th:if="${bookings.isEmpty()}">You have no bookings yet. <a href="/booking/new">Book an appointment →</a></p>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

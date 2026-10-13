@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="stepper(step)" class="m-stepper" style="margin-bottom:28px">
+  <span class="m-step" th:classappend="${step == 1} ? 'is-current' : (${step > 1} ? 'is-done' : '')">
+    <span class="m-step__dot" th:text="${step > 1} ? '✓' : '1'">1</span><span class="m-step__label">Service</span>
+  </span>
+  <span class="m-step" th:classappend="${step == 2} ? 'is-current' : (${step > 2} ? 'is-done' : '')">
+    <span class="m-step__dot" th:text="${step > 2} ? '✓' : '2'">2</span><span class="m-step__label">Date &amp; time</span>
+  </span>
+  <span class="m-step" th:classappend="${step == 3} ? 'is-current' : (${step > 3} ? 'is-done' : '')">
+    <span class="m-step__dot" th:text="${step > 3} ? '✓' : '3'">3</span><span class="m-step__label">Login</span>
+  </span>
+  <span class="m-step" th:classappend="${step == 4} ? 'is-current' : ''">
+    <span class="m-step__dot">4</span><span class="m-step__label">Confirm</span>
+  </span>
+</div>
+</body>
+</html>
