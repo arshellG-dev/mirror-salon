@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('home')}"></header>
+<main>
+  <!-- Hero: full-bleed interior photo, Ken Burns + parallax, transparent header over it -->
+  <section class="m-hero">
+    <div class="m-hero__bg" data-hero-bg><div class="m-hero__img" data-kenburns></div></div>
+    <div class="m-hero__shade"></div>
+    <div class="m-hero__shade m-hero__shade--side"></div>
+    <div class="m-hero__inner">
+      <div class="m-hero__copy">
+        <div class="m-eyebrow m-eyebrow--rule" data-stagger>MAKEOVER PLACE · MOUNT LAVINIA</div>
+        <h1 class="m-hero-title" data-lines>Your reflection,<br/><em class="m-accent">refined.</em></h1>
+        <p class="m-lead" data-stagger>Sothys facials, threading, nails, waxing and complete hair care — in a warm, wood-panelled studio on Hotel Road.</p>
+        <div class="m-hero__ctas" data-stagger>
+          <a href="/booking/new" class="m-btn m-btn--primary m-btn--lg" data-ripple>Book an appointment</a>
+          <a href="/services" class="m-btn m-btn--outline m-btn--lg" data-ripple>View price list</a>
+        </div>
+      </div>
+      <div class="m-hero__media">
+        <a th:if="${heroService}" th:href="@{/booking/new(serviceId=${heroService.serviceId})}" class="m-float-card" data-stagger data-ripple>
+          <span class="m-meta">SOTHYS · SIGNATURE</span>
+          <span class="m-float-card__title">Hydra Facial</span>
+          <span class="m-float-card__price">Rs. 17,500 <span>Book →</span></span>
+        </a>
+      </div>
+    </div>
+    <div class="m-hero__rule"></div>
+  </section>
+
+  <div class="m-marquee" aria-hidden="true">
+    <div class="m-marquee__track">
+      <span class="m-marquee__item">Facials</span><span class="m-marquee__item">Threading</span><span class="m-marquee__item">Nails</span>
+      <span class="m-marquee__item">Waxing</span><span class="m-marquee__item">Haircuts</span><span class="m-marquee__item">Hair Setting</span>
+      <span class="m-marquee__item">Hair Color</span><span class="m-marquee__item">Hair Relaxing</span><span class="m-marquee__item">Hair Treatments</span>
+      <span class="m-marquee__item">Facials</span><span class="m-marquee__item">Threading</span><span class="m-marquee__item">Nails</span>
+      <span class="m-marquee__item">Waxing</span><span class="m-marquee__item">Haircuts</span><span class="m-marquee__item">Hair Setting</span>
+      <span class="m-marquee__item">Hair Color</span><span class="m-marquee__item">Hair Relaxing</span><span class="m-marquee__item">Hair Treatments</span>
+    </div>
+  </div>
+
+  <!-- The studio -->
+  <section class="m-intro" id="studio">
+    <div class="m-intro__media">
+      <div class="m-intro__a" data-reveal data-img><img th:src="@{/img/photo-cut.jpg}" alt="Stylist trimming hair"/></div>
+      <div class="m-intro__b" data-reveal data-img data-parallax="0.08"><img th:src="@{/img/photo-wash.jpg}" alt="Hair wash treatment"/></div>
+      <div class="m-seal" data-reveal>EST.<br/>MOUNT<br/>LAVINIA</div>
+    </div>
+    <div class="m-intro__copy" data-reveal>
+      <span class="m-eyebrow m-eyebrow--rule">THE STUDIO</span>
+      <h2 class="m-h2">Walnut mirrors, warm light, <em class="m-accent">unhurried care.</em></h2>
+      <p class="m-body">Two studios under one roof — face &amp; body, and hair. Every appointment is given the time it needs, with professional Sothys and Jovees products and stylists who listen first.</p>
+      <div><a href="/visit" class="m-btn m-btn--primary m-btn--md" data-ripple>Visit the salon</a></div>
+    </div>
+  </section>
+
+  <!-- Price list -->
+  <section class="m-sec--ink" id="prices">
+    <div class="m-sec__inner">
+      <div class="m-row-between" style="margin-bottom:60px" data-reveal>
+        <div class="m-heading-block">
+          <span class="m-eyebrow m-eyebrow--rule">THE PRICE LIST</span>
+          <h2 class="m-h2">Two studios, <em class="m-accent">one standard.</em></h2>
+        </div>
+        <a href="/services" class="m-link-btn m-link-btn--grow" data-ripple>All services →</a>
+      </div>
+      <div class="m-studios">
+        <div class="m-studio" data-reveal>
+          <div class="m-studio__head">
+            <h3 class="m-studio__title">Face &amp; Body</h3>
+            <span class="m-meta">4 CATEGORIES</span>
+          </div>
+          <a th:each="s : ${faceBody}" th:href="@{/services/{id}(id=${s.category.categoryId})}" class="m-list-row" data-ripple>
+            <span class="m-list-row__num" th:text="${#numbers.formatInteger(s.category.categoryId,2)}">01</span>
+            <span class="m-list-row__name" th:text="${s.category.categoryName}">Category</span>
+            <span class="m-list-row__price" th:text="'from Rs. ' + ${#numbers.formatDecimal(s.fromPrice, 1, 'COMMA', 0, 'POINT')}">from Rs. 0</span>
+            <span class="m-list-row__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div class="m-studio" data-reveal>
+          <div class="m-studio__head">
+            <h3 class="m-studio__title">Hair</h3>
+            <span class="m-meta">5 CATEGORIES</span>
+          </div>
+          <a th:each="s : ${hair}" th:href="@{/services/{id}(id=${s.category.categoryId})}" class="m-list-row" data-ripple>
+            <span class="m-list-row__num" th:text="${#numbers.formatInteger(s.category.categoryId,2)}">05</span>
+            <span class="m-list-row__name" th:text="${s.category.categoryName}">Category</span>
+            <span class="m-list-row__price" th:text="'from Rs. ' + ${#numbers.formatDecimal(s.fromPrice, 1, 'COMMA', 0, 'POINT')}">from Rs. 0</span>
+            <span class="m-list-row__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Signature treatments -->
+  <section class="m-container" id="signature" style="padding-top:130px; padding-bottom:110px">
+    <div class="m-heading-block" style="margin-bottom:56px; align-items:center; text-align:center" data-reveal>
+      <span class="m-eyebrow">MOST REQUESTED</span>
+      <h2 class="m-h2">Signature <em class="m-accent">treatments</em></h2>
+    </div>
+    <div class="m-grid m-grid--fit" style="--min:320px; gap:28px">
+      <article class="m-card m-card--sig" th:each="s : ${signature}" data-reveal
+               th:with="photo=${s.category.categoryId == 5 ? '/img/photo-cut.jpg' : (s.category.categoryId == 6 ? '/img/photo-iron.jpg' : (s.category.categoryId == 9 ? '/img/photo-wash.jpg' : null))}">
+        <div class="m-card__media" data-img>
+          <img th:if="${photo}" th:src="@{${photo}}" th:alt="${s.serviceName}"/>
+          <div class="m-ph" style="position:absolute; inset:0" th:unless="${photo}"><span class="m-ph__label" th:text="${s.category.categoryName} + ' · photo'">photo</span></div>
+          <span class="m-card__tag" th:text="${s.category.categoryName}">CATEGORY</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; padding-bottom:18px; border-bottom:1px solid var(--line)">
+          <div class="m-stack" style="gap:6px">
+            <h3 class="m-card__title" th:text="${s.serviceName}">Service</h3>
+            <span class="m-card__price" style="font-size:15px" th:text="'Rs. ' + ${#numbers.formatDecimal(s.price, 1, 'COMMA', 0, 'POINT')} + (${s.restricted} ? '+' : '')">Rs. 0</span>
+          </div>
+          <a th:href="@{/booking/new(serviceId=${s.serviceId})}" class="m-btn m-btn--outline m-btn--sm" data-ripple>Book</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="m-sec--ink2" id="reviews" data-reviews th:if="${!reviews.isEmpty()}">
+    <div class="m-sec__inner m-sec__inner--sm">
+      <div class="m-row-between" style="margin-bottom:52px" data-reveal>
+        <div class="m-heading-block">
+          <span class="m-eyebrow m-eyebrow--rule">KIND WORDS</span>
+          <h2 class="m-h2">From our <em class="m-accent">clients</em></h2>
+        </div>
+        <div style="display:flex; gap:10px">
+          <button type="button" class="m-icon-btn m-icon-btn--light" data-rev-prev data-ripple aria-label="Previous review">←</button>
+          <button type="button" class="m-icon-btn m-icon-btn--dark" data-rev-next data-ripple aria-label="Next review">→</button>
+        </div>
+      </div>
+      <div class="m-reviews" data-reveal>
+        <div class="m-review-feature" data-rev-feature aria-live="polite">
+          <span class="m-review-feature__mark" aria-hidden="true">“</span>
+          <p class="m-review-feature__text" data-rev-text th:text="${reviews[0].comment}">Review text</p>
+          <div class="m-review-feature__foot">
+            <div class="m-stack" style="gap:6px">
+              <span class="m-review-feature__name" data-rev-name th:text="${reviews[0].customer.fullName}">Client</span>
+              <span class="m-review-feature__svc" data-rev-svc>The Mirror</span>
+            </div>
+            <span class="m-stars" aria-label="rating" th:text="${#strings.repeat('★', reviews[0].rating)}">★★★★★</span>
+          </div>
+        </div>
+        <div class="m-review-list">
+          <button type="button" th:each="r, iter : ${reviews}" class="m-review-item" th:classappend="${iter.index == 0} ? 'is-active'"
+                  th:data-rev-index="${iter.index}" th:data-name="${r.customer.fullName}" data-svc="The Mirror" th:data-text="${r.comment}" data-ripple>
+            <span class="m-avatar" th:text="${#strings.substring(r.customer.fullName,0,1)}">A</span>
+            <span style="min-width:0"><span class="m-review-item__name" th:text="${r.customer.fullName}">Name</span><span class="m-review-item__snippet" th:text="${r.comment}">Snippet</span></span>
+            <span class="m-review-item__svc" th:text="${#strings.repeat('★', r.rating)}">★★★★★</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing call to action -->
+  <section class="m-cta" id="closing">
+    <div class="m-cta__bg" data-parallax="-0.12"></div>
+    <div class="m-cta__shade"></div>
+    <div class="m-cta__inner" data-reveal>
+      <span class="m-eyebrow">51, HOTEL ROAD · MOUNT LAVINIA</span>
+      <h2>Your chair is <em class="m-accent">waiting.</em></h2>
+      <div class="m-cta__btns">
+        <a href="/booking/new" class="m-btn m-btn--primary m-btn--lg" data-ripple>Book online</a>
+        <a href="tel:0776682015" class="m-btn m-btn--outline m-btn--lg" data-ripple>Call 0776-682-015</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
